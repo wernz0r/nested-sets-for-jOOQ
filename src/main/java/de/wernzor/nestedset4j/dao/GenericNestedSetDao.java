@@ -29,11 +29,8 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(node);
     }
 
-    public void insertAsFirstChild(N child, N parent) {
-        N parentRecord = findById(parent.getId());
-        if (parentRecord == null) {
-            throw new IllegalArgumentException("parent not found");
-        }
+    public void insertAsFirstChild(N parent, N child) {
+        N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getLeft() + 1);
         child.setRight(parentRecord.getLeft() + 2);
@@ -42,6 +39,26 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         shiftNodes(child.getLeft(), 2L);
 
         insert(child);
+    }
+
+    public void insertAsLastChildOf(N parent, N child) {
+        N parentRecord = fetchNode(parent);
+
+        child.setLeft(parentRecord.getRight());
+        child.setRight(parentRecord.getRight() + 1);
+        child.setLevel(parentRecord.getLevel() + 1);
+
+        shiftNodes(child.getLeft(), 2L);
+
+        insert(child);
+    }
+
+    private N fetchNode(N node) {
+        N nodeRecord = findById(node.getId());
+        if (nodeRecord == null) {
+            throw new IllegalArgumentException("node not found");
+        }
+        return nodeRecord;
     }
 
     private void shiftNodes(Long first, Long delta) {
