@@ -65,6 +65,18 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(newSibling);
     }
 
+    public void insertAsNextSiblingOf(N existingSibling, N newSibling) {
+        N existingSiblingRecord = fetchNode(existingSibling);
+
+        newSibling.setLeft(existingSibling.getRight() + 1);
+        newSibling.setRight(existingSibling.getRight() + 2);
+        newSibling.setLevel(existingSibling.getLevel());
+
+        shiftNodes(newSibling.getLeft(), 2L);
+
+        insert(newSibling);
+    }
+
     private N fetchNode(N node) {
         N nodeRecord = findById(node.getId());
         if (nodeRecord == null) {
