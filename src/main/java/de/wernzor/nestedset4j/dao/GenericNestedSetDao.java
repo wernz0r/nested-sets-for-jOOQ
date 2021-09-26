@@ -94,6 +94,21 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .fetchInto(getType());
     }
 
+    public N getParent(N node) {
+        return getAncestors(node).get(0);
+    }
+
+    public List<N> getAncestors(N node) {
+        N nodeRecord = fetchNode(node);
+
+        return ctx().select()
+                .from(getTable())
+                .where(getLeftField().lessThan(nodeRecord.getLeft()))
+                .and(getRightField().greaterThan(nodeRecord.getRight()))
+                .orderBy(getRightField().asc())
+                .fetchInto(getType());
+    }
+
     private N fetchNode(N node) {
         N nodeRecord = findById(node.getId());
         if (nodeRecord == null) {
