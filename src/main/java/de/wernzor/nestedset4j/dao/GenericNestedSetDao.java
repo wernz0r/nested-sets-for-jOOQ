@@ -7,6 +7,8 @@ import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DAOImpl;
 
+import java.util.List;
+
 public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P>, P> extends DAOImpl<R, N, Long> {
 
     protected GenericNestedSetDao(Table<R> table, Class<N> type) {
@@ -75,6 +77,21 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         shiftNodes(newSibling.getLeft(), 2L);
 
         insert(newSibling);
+    }
+
+    public boolean hasChildren(N node) {
+        N nodeRecord = fetchNode(node);
+        return nodeRecord.getRight() - node.getLeft() > 1;
+    }
+
+    public List<N> getDescendantsOf(N node) {
+        N nodeRecord = fetchNode(node);
+
+        return ctx().select()
+                .from(getTable())
+                .where(getLeftField().greaterThan(nodeRecord.getLeft()))
+                .and(getRightField().lessThan(nodeRecord.getRight()))
+                .fetchInto(getType());
     }
 
     private N fetchNode(N node) {
