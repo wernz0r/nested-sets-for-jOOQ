@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.wernzor</groupId>
-    <artifactId>nestedset4j</artifactId>
+    <artifactId>nestedset4jooq</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

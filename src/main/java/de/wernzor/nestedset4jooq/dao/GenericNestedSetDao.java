@@ -1,6 +1,6 @@
-package de.wernzor.nestedset4j.dao;
+package de.wernzor.nestedset4jooq.dao;
 
-import de.wernzor.nestedset4j.model.NestedSetNode;
+import de.wernzor.nestedset4jooq.model.NestedSetNode;
 import org.jooq.Configuration;
 import org.jooq.Table;
 import org.jooq.TableField;

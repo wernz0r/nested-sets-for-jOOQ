@@ -1,4 +1,4 @@
-package de.wernzor.nestedset4j.model;
+package de.wernzor.nestedset4jooq.model;
 
 public interface NestedSetNode<P> {
 
