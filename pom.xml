@@ -9,18 +9,131 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-
         <jooq.version>3.15.2</jooq.version>
+        <h2.version>1.4.200</h2.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.5.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <!-- Use org.jooq                for the Open Source Edition
+                     org.jooq.pro            for commercial editions with Java 17 support,
+                     org.jooq.pro-java-11    for commercial editions with Java 11 support,
+                     org.jooq.pro-java-8     for commercial editions with Java 8 support,
+                     org.jooq.trial          for the free trial edition with Java 17 support,
+                     org.jooq.trial-java-11  for the free trial edition with Java 11 support,
+                     org.jooq.trial-java-8   for the free trial edition with Java 8 support
+
+                 Note: Only the Open Source Edition is hosted on Maven Central.
+                       Import the others manually from your distribution -->
             <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
+            <artifactId>jooq-meta-extensions</artifactId>
             <version>${jooq.version}</version>
         </dependency>
+
+        <!-- spring boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.version}</version>
+                <executions>
+                    <execution>
+                        <id>jooq-codegen</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generator>
+                                <database>
+                                    <name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
+                                    <properties>
+                                        <!-- Specify the location of your XML script. -->
+                                        <property>
+                                            <key>scripts</key>
+                                            <value>
+                                                ${project.basedir}/src/test/resources/schema.sql
+                                            </value>
+                                        </property>
+
+                                        <!-- The property "changeLogParameters.contexts" will be passed on to the
+                                             liquibase.database.Database.update() call (jOOQ 3.13.2+).
+                                             See https://www.liquibase.org/documentation/contexts.html -->
+                                        <property>
+                                            <key>changeLogParameters.contexts</key>
+                                            <value>!test</value>
+                                        </property>
+                                    </properties>
+                                </database>
+                                <generate>
+                                    <pojos>true</pojos>
+                                    <daos>true</daos>
+                                    <pojosEqualsAndHashCode>
+                                        true
+                                    </pojosEqualsAndHashCode>
+                                    <javaTimeTypes>true</javaTimeTypes>
+                                    <fluentSetters>true</fluentSetters>
+                                    <springAnnotations>true</springAnnotations>
+                                </generate>
+                                <target>
+                                    <!-- modify packageName for final project -->
+                                    <packageName>de.wernzor.nestedset4jooq.test</packageName>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.h2database</groupId>
+                        <artifactId>h2</artifactId>
+                        <version>${h2.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
