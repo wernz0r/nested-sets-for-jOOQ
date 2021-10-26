@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import static de.wernzor.nestedset4jooq.test.tables.Category.CATEGORY;
 
 @Repository
-public class CategoryNestedSetDao extends GenericNestedSetDao<CategoryRecord, CategoryNode, Category> {
+public class CategoryNestedSetDao extends GenericNestedSetDao<CategoryRecord, CategoryNode, Category, Long> {
 
     @Autowired
     public CategoryNestedSetDao(Configuration configuration) {
@@ -31,10 +31,5 @@ public class CategoryNestedSetDao extends GenericNestedSetDao<CategoryRecord, Ca
     @Override
     public Long getId(CategoryNode categoryNode) {
         return categoryNode.getId();
-    }
-
-    public void clearAll() {
-        super.ctx().deleteFrom(CATEGORY)
-                .execute();
     }
 }
