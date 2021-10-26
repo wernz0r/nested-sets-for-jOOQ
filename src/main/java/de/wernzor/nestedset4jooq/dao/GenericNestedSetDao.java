@@ -9,7 +9,7 @@ import org.jooq.impl.DAOImpl;
 
 import java.util.List;
 
-public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P>, P> extends DAOImpl<R, N, Long> {
+public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P, T>, P, T> extends DAOImpl<R, N, T> {
 
     protected GenericNestedSetDao(Table<R> table, Class<N> type) {
         super(table, type);
@@ -38,7 +38,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         child.setRight(parentRecord.getLeft() + 2);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        shiftNodes(child.getLeft(), 2L);
+        shiftNodes(child.getLeft());
 
         insert(child);
     }
@@ -50,7 +50,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         child.setRight(parentRecord.getRight() + 1);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        shiftNodes(child.getLeft(), 2L);
+        shiftNodes(child.getLeft());
 
         insert(child);
     }
@@ -62,7 +62,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         newSibling.setRight(existingSiblingRecord.getLeft() + 1);
         newSibling.setLevel(existingSiblingRecord.getLevel());
 
-        shiftNodes(newSibling.getLeft(), 2L);
+        shiftNodes(newSibling.getLeft());
 
         insert(newSibling);
     }
@@ -74,7 +74,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         newSibling.setRight(existingSibling.getRight() + 2);
         newSibling.setLevel(existingSibling.getLevel());
 
-        shiftNodes(newSibling.getLeft(), 2L);
+        shiftNodes(newSibling.getLeft());
 
         insert(newSibling);
     }
@@ -118,21 +118,21 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         return nodeRecord;
     }
 
-    private void shiftNodes(Long first, Long delta) {
-        shiftLeftNodes(first, delta);
-        shiftRightNodes(first, delta);
+    private void shiftNodes(Long first) {
+        shiftLeftNodes(first);
+        shiftRightNodes(first);
     }
 
-    private void shiftLeftNodes(Long first, Long delta) {
+    private void shiftLeftNodes(Long first) {
         ctx().update(this.getTable())
-                .set(this.getLeftField(), this.getLeftField().add(delta))
+                .set(this.getLeftField(), this.getLeftField().add(2))
                 .where(this.getLeftField().greaterOrEqual(first))
                 .execute();
     }
 
-    private void shiftRightNodes(Long first, Long delta) {
+    private void shiftRightNodes(Long first) {
         ctx().update(this.getTable())
-                .set(this.getRightField(), this.getRightField().add(delta))
+                .set(this.getRightField(), this.getRightField().add(2))
                 .where(this.getRightField().greaterOrEqual(first))
                 .execute();
     }

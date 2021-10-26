@@ -1,10 +1,10 @@
 package de.wernzor.nestedset4jooq.model;
 
-public interface NestedSetNode<P> {
+public interface NestedSetNode<P, T> {
 
-    Long getId();
+    T getId();
 
-    P setId(Long id);
+    P setId(T id);
 
     Long getLeft();
 
