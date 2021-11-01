@@ -1,11 +1,9 @@
 package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
-import org.jooq.Configuration;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.impl.DAOImpl;
+import org.jooq.impl.DSL;
 
 import java.util.List;
 
@@ -23,6 +21,8 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
 
     public abstract TableField<R, Long> getRightField();
 
+    public abstract TableField<R, Long> getLevelField();
+
     public void insertAsRoot(N node) {
         node.setLeft(1L);
         node.setRight(2L);
@@ -32,7 +32,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     public void insertAsFirstChild(N parent, N child) {
-        N parentRecord = fetchNode(parent);
+        final N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getLeft() + 1);
         child.setRight(parentRecord.getLeft() + 2);
@@ -44,7 +44,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     public void insertAsLastChildOf(N parent, N child) {
-        N parentRecord = fetchNode(parent);
+        final N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getRight());
         child.setRight(parentRecord.getRight() + 1);
@@ -56,7 +56,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     public void insertAsPrevSiblingOf(N existingSibiling, N newSibling) {
-        N existingSiblingRecord = fetchNode(existingSibiling);
+        final N existingSiblingRecord = fetchNode(existingSibiling);
 
         newSibling.setLeft(existingSiblingRecord.getLeft());
         newSibling.setRight(existingSiblingRecord.getLeft() + 1);
@@ -68,11 +68,11 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     public void insertAsNextSiblingOf(N existingSibling, N newSibling) {
-        N existingSiblingRecord = fetchNode(existingSibling);
+        final N existingSiblingRecord = fetchNode(existingSibling);
 
-        newSibling.setLeft(existingSibling.getRight() + 1);
-        newSibling.setRight(existingSibling.getRight() + 2);
-        newSibling.setLevel(existingSibling.getLevel());
+        newSibling.setLeft(existingSiblingRecord.getRight() + 1);
+        newSibling.setRight(existingSiblingRecord.getRight() + 2);
+        newSibling.setLevel(existingSiblingRecord.getLevel());
 
         shiftNodes(newSibling.getLeft());
 
@@ -80,23 +80,35 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     public boolean hasChildren(N node) {
-        N nodeRecord = fetchNode(node);
+        final N nodeRecord = fetchNode(node);
+
         return nodeRecord.getRight() - node.getLeft() > 1;
     }
 
+    public List<N> getChildrenOf(N node) {
+        return getDescendantsOf(node, 1);
+    }
+
     public List<N> getDescendantsOf(N node) {
-        N nodeRecord = fetchNode(node);
+        return getDescendantsOf(node, 0);
+    }
+
+    public List<N> getDescendantsOf(N node, int depth) {
+        final N nodeRecord = fetchNode(node);
+
+        final Condition depthIsZero = DSL.condition(depth == 0);
 
         return ctx().select()
                 .from(getTable())
                 .where(getLeftField().greaterThan(nodeRecord.getLeft()))
                 .and(getRightField().lessThan(nodeRecord.getRight()))
+                .and(depthIsZero.or(getLevelField().lessOrEqual(nodeRecord.getLevel() + depth)))
                 .orderBy(getLeftField().asc())
                 .fetchInto(getType());
     }
 
     public List<N> getAncestorsOf(N node) {
-        N nodeRecord = fetchNode(node);
+        final N nodeRecord = fetchNode(node);
 
         return ctx().select()
                 .from(getTable())
@@ -106,12 +118,13 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .fetchInto(getType());
     }
 
-    public N getParent(N node) {
+    public N getParentOf(N node) {
         return getAncestorsOf(node).get(0);
     }
 
     private N fetchNode(N node) {
-        N nodeRecord = findById(node.getId());
+        final N nodeRecord = findById(node.getId());
+
         if (nodeRecord == null) {
             throw new IllegalArgumentException("node not found");
         }

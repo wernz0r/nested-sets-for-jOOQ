@@ -115,7 +115,7 @@ public class ChildTest extends AbstractNestedSetTest {
     }
 
     @Test
-    public void getDescendantsOf() {
+    public void getChildrenOf() {
         var parent = getNode("rootNode");
         dao.insertAsRoot(parent);
 
@@ -125,18 +125,36 @@ public class ChildTest extends AbstractNestedSetTest {
         var child2 = getNode("secondInsertedChild");
         dao.insertAsLastChildOf(parent, child2);
 
-        var grandchild1 = getNode("firstInsertedGrandchild");
+        var child3 = getNode("thirdInsertedChild");
+        dao.insertAsLastChildOf(parent, child3);
+
+        var grandchild1 = getNode("firstGrandchild");
         dao.insertAsLastChildOf(child1, grandchild1);
 
-        var result = dao.getDescendantsOf(parent);
-        assertEquals(3, result.size());
+        var grandchild2 = getNode("secondGrandchild");
+        dao.insertAsLastChildOf(child1, grandchild2);
 
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-        var secondInsertedChild = getByName(result, "secondInsertedChild");
-        var firstGrandchild = getByName(result, "firstInsertedGrandchild");
+        var grandchild3 = getNode("thirdGandchild");
+        dao.insertAsLastChildOf(child3, grandchild3);
 
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 5, 1));
-        assertTrue(matches(firstGrandchild, "firstInsertedGrandchild", 3, 4, 2));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 6, 7, 1));
+        var childrenOfParent = dao.getChildrenOf(parent);
+        assertEquals(3, childrenOfParent.size());
+
+        var firstInsertedChild = getByName(childrenOfParent, "firstInsertedChild");
+        var secondInsertedChild = getByName(childrenOfParent, "secondInsertedChild");
+        var thirdInsertedChild = getByName(childrenOfParent, "thirdInsertedChild");
+
+        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 7, 1));
+        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 8, 9, 1));
+        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 10, 13, 1));
+
+        var childrenOfChild1 = dao.getChildrenOf(child1);
+        assertEquals(2, childrenOfChild1.size());
+
+        var firstGrandchild = getByName(childrenOfChild1, "firstGrandchild");
+        var secondGrandchild = getByName(childrenOfChild1, "secondGrandchild");
+
+        assertTrue(matches(firstGrandchild, "firstGrandchild", 3, 4, 2));
+        assertTrue(matches(secondGrandchild, "secondGrandchild", 5, 6, 2));
     }
 }

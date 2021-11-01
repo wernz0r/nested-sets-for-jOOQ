@@ -29,6 +29,11 @@ public class CategoryNestedSetDao extends GenericNestedSetDao<CategoryRecord, Ca
     }
 
     @Override
+    public TableField<CategoryRecord, Long> getLevelField() {
+        return CATEGORY.LEVEL;
+    }
+
+    @Override
     public Long getId(CategoryNode categoryNode) {
         return categoryNode.getId();
     }
