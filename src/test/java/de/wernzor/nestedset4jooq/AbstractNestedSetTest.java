@@ -25,7 +25,7 @@ abstract class AbstractNestedSetTest {
         return node;
     }
 
-    boolean equals(CategoryNode node, String name, long left, long right, long level) {
+    boolean matches(CategoryNode node, String name, long left, long right, long level) {
         return name.equals(node.getName()) &&
                 node.getLeft() == left &&
                 node.getRight() == right &&

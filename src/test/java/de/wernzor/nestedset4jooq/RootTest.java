@@ -15,7 +15,7 @@ public class RootTest extends AbstractNestedSetTest {
     }
 
     @Test
-    public void createRoot() {
+    public void insertAsRoot() {
         var parent = getNode("rootNode");
         dao.insertAsRoot(parent);
 
@@ -24,7 +24,6 @@ public class RootTest extends AbstractNestedSetTest {
 
         var rootNode = result.get(0);
 
-        assertTrue(equals(rootNode, "rootNode", 1, 2, 0));
+        assertTrue(matches(rootNode, "rootNode", 1, 2, 0));
     }
-
 }
