@@ -15,6 +15,19 @@ public class TreeTest extends AbstractNestedSetTest {
     }
 
     @Test
+    public void insertAsRoot() {
+        var parent = getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var result = dao.findAll();
+        assertEquals(1, result.size());
+
+        var rootNode = result.get(0);
+
+        assertTrue(matches(rootNode, "rootNode", 1, 2, 0));
+    }
+
+    @Test
     public void getDescendantsOf() {
         var parent = getNode("rootNode");
         dao.insertAsRoot(parent);
@@ -83,5 +96,31 @@ public class TreeTest extends AbstractNestedSetTest {
 
         var parentOfGrandchild1 = dao.getParentOf(grandchild1);
         assertTrue(matches(parentOfGrandchild1, "firstInsertedChild", 2, 5, 1));
+    }
+
+    @Test
+    public void deleteIncludingDescendants() {
+        var parent = getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var child1 = getNode("firstInsertedChild");
+        dao.insertAsLastChildOf(parent, child1);
+
+        var grandchild1 = getNode("firstInsertedGrandchild");
+        dao.insertAsLastChildOf(child1, grandchild1);
+
+        var child2 = getNode("secondInsertedChild");
+        dao.insertAsLastChildOf(parent, child2);
+
+        dao.deleteIncludingDescendants(child1);
+
+        var result = dao.findAll();
+        assertEquals(2, result.size());
+
+        var rootNode = getByName(result, "rootNode");
+        var secondInsertedChild = getByName(result, "secondInsertedChild");
+
+        assertTrue(matches(rootNode, "rootNode", 1, 4, 0));
+        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 2, 3, 1));
     }
 }

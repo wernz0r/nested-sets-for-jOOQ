@@ -2,6 +2,7 @@ package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
 import org.jooq.*;
+import org.jooq.exception.InvalidResultException;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 
@@ -31,14 +32,14 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(node);
     }
 
-    public void insertAsFirstChild(N parent, N child) {
+    public void insertAsFirstChildOf(N parent, N child) {
         final N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getLeft() + 1);
         child.setRight(parentRecord.getLeft() + 2);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        shiftNodes(child.getLeft());
+        createGap(child.getLeft());
 
         insert(child);
     }
@@ -50,7 +51,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         child.setRight(parentRecord.getRight() + 1);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        shiftNodes(child.getLeft());
+        createGap(child.getLeft());
 
         insert(child);
     }
@@ -62,7 +63,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         newSibling.setRight(existingSiblingRecord.getLeft() + 1);
         newSibling.setLevel(existingSiblingRecord.getLevel());
 
-        shiftNodes(newSibling.getLeft());
+        createGap(newSibling.getLeft());
 
         insert(newSibling);
     }
@@ -74,7 +75,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         newSibling.setRight(existingSiblingRecord.getRight() + 2);
         newSibling.setLevel(existingSiblingRecord.getLevel());
 
-        shiftNodes(newSibling.getLeft());
+        createGap(newSibling.getLeft());
 
         insert(newSibling);
     }
@@ -122,31 +123,57 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         return getAncestorsOf(node).get(0);
     }
 
+    public void deleteIncludingDescendants(N node) {
+        final N nodeRecord = fetchNode(node);
+
+        ctx().deleteFrom(getTable())
+                .where(getLeftField().greaterOrEqual(nodeRecord.getLeft()))
+                .and(getRightField().lessOrEqual(nodeRecord.getRight()))
+                .execute();
+
+        final Long delta = nodeRecord.getLeft() - nodeRecord.getRight() - 1;
+
+        closeGap(nodeRecord.getRight() + 1, delta);
+    }
+
     private N fetchNode(N node) {
         final N nodeRecord = findById(node.getId());
 
         if (nodeRecord == null) {
-            throw new IllegalArgumentException("node not found");
+            throw new InvalidResultException("node not found");
         }
         return nodeRecord;
     }
 
-    private void shiftNodes(Long first) {
-        shiftLeftNodes(first);
-        shiftRightNodes(first);
+    private void createGap(Long startValue) {
+        shiftLeftNodesByTwo(startValue);
+        shiftRightNodesByTwo(startValue);
     }
 
-    private void shiftLeftNodes(Long first) {
+    private void closeGap(Long startValue, Long sizeOfGap) {
+        shiftLeftNodes(startValue, sizeOfGap);
+        shiftRightNodes(startValue, sizeOfGap);
+    }
+
+    private void shiftLeftNodesByTwo(Long startValue) {
+        shiftLeftNodes(startValue, 2L);
+    }
+
+    private void shiftLeftNodes(Long startValue, Long sizeOfGap) {
         ctx().update(this.getTable())
-                .set(this.getLeftField(), this.getLeftField().add(2))
-                .where(this.getLeftField().greaterOrEqual(first))
+                .set(this.getLeftField(), this.getLeftField().add(sizeOfGap))
+                .where(this.getLeftField().greaterOrEqual(startValue))
                 .execute();
     }
 
-    private void shiftRightNodes(Long first) {
+    private void shiftRightNodesByTwo(Long startValue) {
+        shiftRightNodes(startValue, 2L);
+    }
+
+    private void shiftRightNodes(Long startValue, Long sizeOfGap) {
         ctx().update(this.getTable())
-                .set(this.getRightField(), this.getRightField().add(2))
-                .where(this.getRightField().greaterOrEqual(first))
+                .set(this.getRightField(), this.getRightField().add(sizeOfGap))
+                .where(this.getRightField().greaterOrEqual(startValue))
                 .execute();
     }
 }

@@ -19,7 +19,7 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child = getNode("firstInsertedChild");
-        dao.insertAsFirstChild(parent, child);
+        dao.insertAsFirstChildOf(parent, child);
 
         var result = dao.findAll();
         assertEquals(2, result.size());
@@ -37,10 +37,10 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsFirstChild(parent, child1);
+        dao.insertAsFirstChildOf(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsFirstChild(parent, child2);
+        dao.insertAsFirstChildOf(parent, child2);
 
         var result = dao.findAll();
         assertEquals(3, result.size());
