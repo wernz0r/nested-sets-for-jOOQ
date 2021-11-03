@@ -20,13 +20,13 @@ public class SibilingTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child1);
+        dao.insertAsLastChild(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsLastChildOf(parent, child2);
+        dao.insertAsLastChild(parent, child2);
 
         var sibling1 = getNode("firstInsertedSibling");
-        dao.insertAsPrevSiblingOf(child2, sibling1);
+        dao.insertAsPrevSibling(child2, sibling1);
 
         var result = dao.findAll();
         assertEquals(4, result.size());
@@ -48,13 +48,13 @@ public class SibilingTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child1);
+        dao.insertAsLastChild(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsLastChildOf(parent, child2);
+        dao.insertAsLastChild(parent, child2);
 
         var sibling1 = getNode("firstInsertedSibling");
-        dao.insertAsNextSiblingOf(child1, sibling1);
+        dao.insertAsNextSibling(child1, sibling1);
 
         var result = dao.findAll();
         assertEquals(4, result.size());

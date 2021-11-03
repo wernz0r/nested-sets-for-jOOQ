@@ -32,7 +32,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(node);
     }
 
-    public void insertAsFirstChildOf(N parent, N child) {
+    public void insertAsFirstChild(N parent, N child) {
         final N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getLeft() + 1);
@@ -44,7 +44,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(child);
     }
 
-    public void insertAsLastChildOf(N parent, N child) {
+    public void insertAsLastChild(N parent, N child) {
         final N parentRecord = fetchNode(parent);
 
         child.setLeft(parentRecord.getRight());
@@ -56,7 +56,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(child);
     }
 
-    public void insertAsPrevSiblingOf(N existingSibiling, N newSibling) {
+    public void insertAsPrevSibling(N existingSibiling, N newSibling) {
         final N existingSiblingRecord = fetchNode(existingSibiling);
 
         newSibling.setLeft(existingSiblingRecord.getLeft());
@@ -68,7 +68,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         insert(newSibling);
     }
 
-    public void insertAsNextSiblingOf(N existingSibling, N newSibling) {
+    public void insertAsNextSibling(N existingSibling, N newSibling) {
         final N existingSiblingRecord = fetchNode(existingSibling);
 
         newSibling.setLeft(existingSiblingRecord.getRight() + 1);
@@ -86,15 +86,15 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         return nodeRecord.getRight() - node.getLeft() > 1;
     }
 
-    public List<N> getChildrenOf(N node) {
-        return getDescendantsOf(node, 1);
+    public List<N> getChildren(N node) {
+        return getDescendants(node, 1);
     }
 
-    public List<N> getDescendantsOf(N node) {
-        return getDescendantsOf(node, 0);
+    public List<N> getDescendants(N node) {
+        return getDescendants(node, 0);
     }
 
-    public List<N> getDescendantsOf(N node, int depth) {
+    public List<N> getDescendants(N node, int depth) {
         final N nodeRecord = fetchNode(node);
 
         final Condition depthIsZero = DSL.condition(depth == 0);
@@ -108,7 +108,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .fetchInto(getType());
     }
 
-    public List<N> getAncestorsOf(N node) {
+    public List<N> getAncestors(N node) {
         final N nodeRecord = fetchNode(node);
 
         return ctx().select()
@@ -119,11 +119,12 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .fetchInto(getType());
     }
 
-    public N getParentOf(N node) {
-        return getAncestorsOf(node).get(0);
+    public N getParent(N node) {
+        return getAncestors(node).get(0);
     }
 
-    public void deleteIncludingDescendants(N node) {
+    @Override
+    public void delete(N node) {
         final N nodeRecord = fetchNode(node);
 
         ctx().deleteFrom(getTable())
@@ -131,9 +132,9 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .and(getRightField().lessOrEqual(nodeRecord.getRight()))
                 .execute();
 
-        final Long delta = nodeRecord.getLeft() - nodeRecord.getRight() - 1;
+        final Long sizeOfGap = nodeRecord.getLeft() - nodeRecord.getRight() - 1;
 
-        closeGap(nodeRecord.getRight() + 1, delta);
+        closeGap(nodeRecord.getRight() + 1, sizeOfGap);
     }
 
     private N fetchNode(N node) {

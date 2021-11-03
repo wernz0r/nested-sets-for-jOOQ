@@ -19,7 +19,7 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child = getNode("firstInsertedChild");
-        dao.insertAsFirstChildOf(parent, child);
+        dao.insertAsFirstChild(parent, child);
 
         var result = dao.findAll();
         assertEquals(2, result.size());
@@ -37,10 +37,10 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsFirstChildOf(parent, child1);
+        dao.insertAsFirstChild(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsFirstChildOf(parent, child2);
+        dao.insertAsFirstChild(parent, child2);
 
         var result = dao.findAll();
         assertEquals(3, result.size());
@@ -60,7 +60,7 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child);
+        dao.insertAsLastChild(parent, child);
 
         var result = dao.findAll();
         assertEquals(2, result.size());
@@ -78,10 +78,10 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child1);
+        dao.insertAsLastChild(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsLastChildOf(parent, child2);
+        dao.insertAsLastChild(parent, child2);
 
         var result = dao.findAll();
         assertEquals(3, result.size());
@@ -101,7 +101,7 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child1);
+        dao.insertAsLastChild(parent, child1);
 
         assertTrue(dao.hasChildren(parent));
     }
@@ -120,24 +120,24 @@ public class ChildTest extends AbstractNestedSetTest {
         dao.insertAsRoot(parent);
 
         var child1 = getNode("firstInsertedChild");
-        dao.insertAsLastChildOf(parent, child1);
+        dao.insertAsLastChild(parent, child1);
 
         var child2 = getNode("secondInsertedChild");
-        dao.insertAsLastChildOf(parent, child2);
+        dao.insertAsLastChild(parent, child2);
 
         var child3 = getNode("thirdInsertedChild");
-        dao.insertAsLastChildOf(parent, child3);
+        dao.insertAsLastChild(parent, child3);
 
         var grandchild1 = getNode("firstGrandchild");
-        dao.insertAsLastChildOf(child1, grandchild1);
+        dao.insertAsLastChild(child1, grandchild1);
 
         var grandchild2 = getNode("secondGrandchild");
-        dao.insertAsLastChildOf(child1, grandchild2);
+        dao.insertAsLastChild(child1, grandchild2);
 
         var grandchild3 = getNode("thirdGandchild");
-        dao.insertAsLastChildOf(child3, grandchild3);
+        dao.insertAsLastChild(child3, grandchild3);
 
-        var childrenOfParent = dao.getChildrenOf(parent);
+        var childrenOfParent = dao.getChildren(parent);
         assertEquals(3, childrenOfParent.size());
 
         var firstInsertedChild = getByName(childrenOfParent, "firstInsertedChild");
@@ -148,7 +148,7 @@ public class ChildTest extends AbstractNestedSetTest {
         assertTrue(matches(secondInsertedChild, "secondInsertedChild", 8, 9, 1));
         assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 10, 13, 1));
 
-        var childrenOfChild1 = dao.getChildrenOf(child1);
+        var childrenOfChild1 = dao.getChildren(child1);
         assertEquals(2, childrenOfChild1.size());
 
         var firstGrandchild = getByName(childrenOfChild1, "firstGrandchild");
