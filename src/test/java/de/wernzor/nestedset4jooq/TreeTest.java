@@ -123,4 +123,80 @@ public class TreeTest extends AbstractNestedSetTest {
         assertTrue(matches(rootNode, "rootNode", 1, 4, 0));
         assertTrue(matches(secondInsertedChild, "secondInsertedChild", 2, 3, 1));
     }
+
+    @Test
+    public void getDescendants() {
+        var parent = getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var child1 = getNode("firstInsertedChild");
+        dao.insertAsLastChild(parent, child1);
+
+        var grandchild1 = getNode("firstInsertedGrandchild");
+        dao.insertAsLastChild(child1, grandchild1);
+
+        var grandGrandchild = getNode("firstInsertedGrandGrandchild");
+        dao.insertAsLastChild(grandchild1, grandGrandchild);
+
+        var child2 = getNode("secondInsertedChild");
+        dao.insertAsLastChild(parent, child2);
+
+        var grandchild2 = getNode("secondInsertedGrandchild");
+        dao.insertAsLastChild(child2, grandchild2);
+
+        var result = dao.getDescendants(parent);
+        assertEquals(5, result.size());
+
+        result = dao.getDescendants(parent, 1);
+        assertEquals(2, result.size());
+
+        result = dao.getDescendants(parent, 2);
+        assertEquals(4, result.size());
+
+        result = dao.getDescendants(parent, 3);
+        assertEquals(5, result.size());
+
+        result = dao.getDescendants(parent, 10);
+        assertEquals(5, result.size());
+
+    }
+
+    @Test
+    public void getAncestors() {
+        var parent = getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var child1 = getNode("firstInsertedChild");
+        dao.insertAsLastChild(parent, child1);
+
+        var grandchild1 = getNode("firstInsertedGrandchild");
+        dao.insertAsLastChild(child1, grandchild1);
+
+        var grandGrandchild = getNode("firstInsertedGrandGrandchild");
+        dao.insertAsLastChild(grandchild1, grandGrandchild);
+
+        var child2 = getNode("secondInsertedChild");
+        dao.insertAsLastChild(parent, child2);
+
+        var grandchild2 = getNode("secondInsertedGrandchild");
+        dao.insertAsLastChild(child2, grandchild2);
+
+        var result = dao.getAncestors(grandGrandchild);
+        assertEquals(3, result.size());
+
+        result = dao.getAncestors(grandGrandchild, 1);
+        assertEquals(1, result.size());
+        assertTrue(matches(result.get(0), "firstInsertedGrandchild", 3, 6, 2));
+
+        result = dao.getAncestors(grandGrandchild, 2);
+        assertEquals(2, result.size());
+        assertTrue(matches(result.get(0), "firstInsertedGrandchild", 3, 6, 2));
+        assertTrue(matches(result.get(1), "firstInsertedChild", 2, 7, 1));
+
+        result = dao.getAncestors(grandGrandchild, 3);
+        assertEquals(3, result.size());
+        assertTrue(matches(result.get(0), "firstInsertedGrandchild", 3, 6, 2));
+        assertTrue(matches(result.get(1), "firstInsertedChild", 2, 7, 1));
+        assertTrue(matches(result.get(2), "rootNode", 1, 12, 0));
+    }
 }
