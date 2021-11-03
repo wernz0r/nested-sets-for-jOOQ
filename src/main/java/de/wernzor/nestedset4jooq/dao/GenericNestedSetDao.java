@@ -1,8 +1,8 @@
 package de.wernzor.nestedset4jooq.dao;
 
+import de.wernzor.nestedset4jooq.exception.NodeNotFoundException;
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
 import org.jooq.*;
-import org.jooq.exception.InvalidResultException;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 
@@ -141,7 +141,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         final N nodeRecord = findById(node.getId());
 
         if (nodeRecord == null) {
-            throw new InvalidResultException("node not found");
+            throw new NodeNotFoundException("Node with id " + node.getId() + " not found.");
         }
         return nodeRecord;
     }
