@@ -232,6 +232,58 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     /**
+     * Makes the source node the first child of the destination node.
+     *
+     * @param source      source node
+     * @param destination destination node
+     */
+    public void moveAsFirstChild(N source, N destination) {
+        if (source == destination) {
+            throw new IllegalArgumentException("Cannot make node the first child of itself.");
+        }
+
+        final N sourceRecord = fetch(source);
+        final N destinationRecord = fetch(destination);
+
+        final Long oldLevel = sourceRecord.getLevel();
+        final Long newLevel = destinationRecord.getLevel() + 1;
+
+        sourceRecord.setLevel(newLevel);
+        update(sourceRecord);
+
+        moveNode(sourceRecord, destinationRecord.getLeft() + 1, newLevel - oldLevel);
+    }
+
+    private void moveNode(N node, Long newLeftValue, Long levelDifference) {
+        final Long sizeOfTree = node.getRight() - node.getLeft() + 1;
+
+        // create a big enough gap inside the tree
+        createGap(newLeftValue, sizeOfTree);
+
+        Long left = node.getLeft();
+        Long right = node.getRight();
+
+        // check if the node was also shifted
+        if (left >= newLeftValue) {
+            left += sizeOfTree;
+            right += sizeOfTree;
+        }
+
+        // set the new level of all descendants of the node
+        ctx().update(getTable())
+                .set(getLevelField(), getLevelField().add(levelDifference))
+                .where(getLeftField().greaterThan(left))
+                .and(getRightField().lessThan(right))
+                .execute();
+
+        // move tree
+        createGap(left, right, newLeftValue - left);
+
+        // close gap
+        closeGap(right + 1, -sizeOfTree);
+    }
+
+    /**
      * Reads a passed node from the database using its ID and returns the associated record.
      * If no node is found for the ID, the function throws a NodeNotFoundException.
      *
@@ -256,6 +308,29 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     private void createGap(Long startValue) {
         shiftLeftNodes(startValue, 2L);
         shiftRightNodes(startValue, 2L);
+    }
+
+    /**
+     * Creates a gap on the right and left side of a tree so that a new node can be inserted there.
+     * The size of the gap is defined by the increment.
+     *
+     * @param startValue start value for the creation of the gap
+     * @param increment  size of gap
+     */
+    private void createGap(Long startValue, Long increment) {
+        shiftLeftNodes(startValue, increment);
+        shiftRightNodes(startValue, increment);
+    }
+
+    /**
+     * Creates a gap on the right and left side of a given size, which is defined by start and end value.
+     *
+     * @param startValue start value for the creation of the gap
+     * @param endValue   ebd value for the creation of the gap
+     */
+    private void createGap(Long startValue, Long endValue, Long increment) {
+        shiftLeftNodes(startValue, endValue, increment);
+        shiftRightNodes(startValue, endValue, increment);
     }
 
     /**
@@ -284,6 +359,20 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     /**
+     * Adds an increment to all nodes whose left value is between start and stop value.
+     *
+     * @param startValue start value
+     * @param stopValue  stopValue value
+     * @param increment  increment, which will be added to the left side of all nodes
+     */
+    private void shiftLeftNodes(Long startValue, Long stopValue, Long increment) {
+        ctx().update(this.getTable())
+                .set(this.getLeftField(), this.getLeftField().add(increment))
+                .where(this.getLeftField().between(startValue, stopValue))
+                .execute();
+    }
+
+    /**
      * Adds an increment to all nodes whose right value is greater than or equal to the start value.
      *
      * @param startValue start value of the right side
@@ -294,6 +383,20 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         ctx().update(this.getTable())
                 .set(this.getRightField(), this.getRightField().add(increment))
                 .where(this.getRightField().greaterOrEqual(startValue))
+                .execute();
+    }
+
+    /**
+     * Adds an increment to all nodes whose right value is between start and stop value.
+     *
+     * @param startValue start value
+     * @param stopValue  stopValue value
+     * @param increment  increment, which will be added to the left side of all nodes
+     */
+    private void shiftRightNodes(Long startValue, Long stopValue, Long increment) {
+        ctx().update(this.getTable())
+                .set(this.getRightField(), this.getRightField().add(increment))
+                .where(this.getRightField().between(startValue, stopValue))
                 .execute();
     }
 }
