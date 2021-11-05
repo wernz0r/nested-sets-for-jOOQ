@@ -202,5 +202,48 @@ public class ChildTest extends AbstractNestedSetTest {
         assertTrue(matches(secondGrandchild, "secondGrandchild", 7, 8, 2));
         assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 10, 13, 1));
         assertTrue(matches(thirdGandchild, "thirdGandchild", 11, 12, 2));
+
+        dao.moveAsFirstChild(thirdInsertedChild, rootNode);
+
+        result = dao.findAll();
+        assertEquals(7, result.size());
+
+        rootNode = getByName(result, "rootNode");
+        firstInsertedChild = getByName(result, "firstInsertedChild");
+        firstGrandchild = getByName(result, "firstGrandchild");
+        secondInsertedChild = getByName(result, "secondInsertedChild");
+        secondGrandchild = getByName(result, "secondGrandchild");
+        thirdInsertedChild = getByName(result, "thirdInsertedChild");
+        thirdGandchild = getByName(result, "thirdGandchild");
+
+        assertTrue(matches(rootNode, "rootNode", 1, 14, 0));
+        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 2, 5, 1));
+        assertTrue(matches(thirdGandchild, "thirdGandchild", 3, 4, 2));
+        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 6, 9, 1));
+        assertTrue(matches(firstGrandchild, "firstGrandchild", 7, 8, 2));
+        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 10, 13, 1));
+        assertTrue(matches(secondGrandchild, "secondGrandchild", 11, 12, 2));
+
+
+        dao.moveAsFirstChild(secondGrandchild, firstGrandchild);
+
+        result = dao.findAll();
+        assertEquals(7, result.size());
+
+        rootNode = getByName(result, "rootNode");
+        firstInsertedChild = getByName(result, "firstInsertedChild");
+        firstGrandchild = getByName(result, "firstGrandchild");
+        secondInsertedChild = getByName(result, "secondInsertedChild");
+        secondGrandchild = getByName(result, "secondGrandchild");
+        thirdInsertedChild = getByName(result, "thirdInsertedChild");
+        thirdGandchild = getByName(result, "thirdGandchild");
+
+        assertTrue(matches(rootNode, "rootNode", 1, 14, 0));
+        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 2, 5, 1));
+        assertTrue(matches(thirdGandchild, "thirdGandchild", 3, 4, 2));
+        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 6, 11, 1));
+        assertTrue(matches(firstGrandchild, "firstGrandchild", 7, 10, 2));
+        assertTrue(matches(secondGrandchild, "secondGrandchild", 8, 9, 3));
+        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 12, 13, 1));
     }
 }

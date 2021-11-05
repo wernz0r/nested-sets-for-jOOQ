@@ -50,7 +50,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         child.setRight(parentRecord.getLeft() + 2);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        createGap(child.getLeft());
+        shiftNodes(child.getLeft());
 
         insert(child);
     }
@@ -68,7 +68,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         child.setRight(parentRecord.getRight() + 1);
         child.setLevel(parentRecord.getLevel() + 1);
 
-        createGap(child.getLeft());
+        shiftNodes(child.getLeft());
 
         insert(child);
     }
@@ -86,7 +86,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         sibling.setRight(nodeRecord.getLeft() + 1);
         sibling.setLevel(nodeRecord.getLevel());
 
-        createGap(sibling.getLeft());
+        shiftNodes(sibling.getLeft());
 
         insert(sibling);
     }
@@ -104,7 +104,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         sibling.setRight(nodeRecord.getRight() + 2);
         sibling.setLevel(nodeRecord.getLevel());
 
-        createGap(sibling.getLeft());
+        shiftNodes(sibling.getLeft());
 
         insert(sibling);
     }
@@ -226,9 +226,10 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .and(getRightField().lessOrEqual(nodeRecord.getRight()))
                 .execute();
 
+        // close the gap
         final Long sizeOfGap = nodeRecord.getLeft() - nodeRecord.getRight() - 1;
 
-        closeGap(nodeRecord.getRight() + 1, sizeOfGap);
+        shiftNodes(nodeRecord.getRight() + 1, sizeOfGap);
     }
 
     /**
@@ -254,33 +255,41 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         moveNode(sourceRecord, destinationRecord.getLeft() + 1, newLevel - oldLevel);
     }
 
-    private void moveNode(N node, Long newLeftValue, Long levelDifference) {
-        final Long sizeOfTree = node.getRight() - node.getLeft() + 1;
+    /**
+     * Moves a node and all its children to new location inside the tree. The new location is defined by the
+     * from value.
+     *
+     * @param node            node which is to be moved
+     * @param from            new position of the node
+     * @param levelDifference level difference which will result in moving the node
+     */
+    private void moveNode(N node, Long from, Long levelDifference) {
+        final long sizeOfTree = node.getRight() - node.getLeft() + 1;
 
-        // create a big enough gap inside the tree
-        createGap(newLeftValue, sizeOfTree);
+        // create a gap of the size of the tree
+        shiftNodes(from, sizeOfTree);
 
         Long left = node.getLeft();
         Long right = node.getRight();
 
-        // check if the node was also shifted
-        if (left >= newLeftValue) {
+        // if the node was also shifted, the size of the tree must be added
+        if (left >= from) {
             left += sizeOfTree;
             right += sizeOfTree;
         }
 
-        // set the new level of all descendants of the node
+        // set the new level for all descendants of the node
         ctx().update(getTable())
                 .set(getLevelField(), getLevelField().add(levelDifference))
                 .where(getLeftField().greaterThan(left))
                 .and(getRightField().lessThan(right))
                 .execute();
 
-        // move tree
-        createGap(left, right, newLeftValue - left);
+        // increment all nodes between left and right in the size of the tree
+        shiftNodes(left, right, from - left);
 
         // close gap
-        closeGap(right + 1, -sizeOfTree);
+        shiftNodes(right + 1, -sizeOfTree);
     }
 
     /**
@@ -305,98 +314,88 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
      *
      * @param startValue start value for the creation of the gap
      */
-    private void createGap(Long startValue) {
+    private void shiftNodes(Long startValue) {
         shiftLeftNodes(startValue, 2L);
         shiftRightNodes(startValue, 2L);
     }
 
     /**
      * Creates a gap on the right and left side of a tree so that a new node can be inserted there.
-     * The size of the gap is defined by the increment.
+     * The size of the gap is defined by the sizeOfGap.
      *
-     * @param startValue start value for the creation of the gap
-     * @param increment  size of gap
+     * @param from      start value for the gap
+     * @param sizeOfGap size of gap
      */
-    private void createGap(Long startValue, Long increment) {
-        shiftLeftNodes(startValue, increment);
-        shiftRightNodes(startValue, increment);
+    private void shiftNodes(Long from, Long sizeOfGap) {
+        shiftLeftNodes(from, sizeOfGap);
+        shiftRightNodes(from, sizeOfGap);
     }
 
     /**
-     * Creates a gap on the right and left side of a given size, which is defined by start and end value.
+     * Adds an increment to the left and right side of all nodes, who live between the from and to range.
      *
-     * @param startValue start value for the creation of the gap
-     * @param endValue   ebd value for the creation of the gap
+     * @param from      start value
+     * @param to        end value
+     * @param increment incrementation
      */
-    private void createGap(Long startValue, Long endValue, Long increment) {
-        shiftLeftNodes(startValue, endValue, increment);
-        shiftRightNodes(startValue, endValue, increment);
+    private void shiftNodes(Long from, Long to, Long increment) {
+        shiftLeftNodes(from, to, increment);
+        shiftRightNodes(from, to, increment);
     }
 
     /**
-     * Updates the right and left of a tree so that gaps of a given size are closed.
+     * Adds an increment to all nodes whose left value is greater than or equal to the from value.
      *
-     * @param startValue start value for closing the gap
-     * @param sizeOfGap  size of the gap
+     * @param from      start value of the left side
+     * @param increment increment, which will be added to the left side of all nodes, whose left value is greater or
+     *                  equal to the start value.
      */
-    private void closeGap(Long startValue, Long sizeOfGap) {
-        shiftLeftNodes(startValue, sizeOfGap);
-        shiftRightNodes(startValue, sizeOfGap);
-    }
-
-    /**
-     * Adds an increment to all nodes whose left value is greater than or equal to the start value.
-     *
-     * @param startValue start value of the left side
-     * @param increment  increment, which will be added to the left side of all nodes, whose left value is greater or
-     *                   equal to the start value.
-     */
-    private void shiftLeftNodes(Long startValue, Long increment) {
+    private void shiftLeftNodes(Long from, Long increment) {
         ctx().update(this.getTable())
                 .set(this.getLeftField(), this.getLeftField().add(increment))
-                .where(this.getLeftField().greaterOrEqual(startValue))
+                .where(this.getLeftField().greaterOrEqual(from))
                 .execute();
     }
 
     /**
-     * Adds an increment to all nodes whose left value is between start and stop value.
+     * Adds an increment to all nodes whose left value is between from and to value.
      *
-     * @param startValue start value
-     * @param stopValue  stopValue value
-     * @param increment  increment, which will be added to the left side of all nodes
+     * @param from      start value
+     * @param to        end value
+     * @param increment increment, which will be added to the left side of all nodes
      */
-    private void shiftLeftNodes(Long startValue, Long stopValue, Long increment) {
+    private void shiftLeftNodes(Long from, Long to, Long increment) {
         ctx().update(this.getTable())
                 .set(this.getLeftField(), this.getLeftField().add(increment))
-                .where(this.getLeftField().between(startValue, stopValue))
+                .where(this.getLeftField().between(from, to))
                 .execute();
     }
 
     /**
-     * Adds an increment to all nodes whose right value is greater than or equal to the start value.
+     * Adds an increment to all nodes whose right value is greater than or equal to the from value.
      *
-     * @param startValue start value of the right side
-     * @param increment  increment, which will be added to the right side of all nodes, whose right value is greater or
-     *                   equal to the start value.
+     * @param from      start value of the right side
+     * @param increment increment, which will be added to the right side of all nodes, whose right value is greater or
+     *                  equal to the start value.
      */
-    private void shiftRightNodes(Long startValue, Long increment) {
+    private void shiftRightNodes(Long from, Long increment) {
         ctx().update(this.getTable())
                 .set(this.getRightField(), this.getRightField().add(increment))
-                .where(this.getRightField().greaterOrEqual(startValue))
+                .where(this.getRightField().greaterOrEqual(from))
                 .execute();
     }
 
     /**
-     * Adds an increment to all nodes whose right value is between start and stop value.
+     * Adds an increment to all nodes whose right value is between from and to value.
      *
-     * @param startValue start value
-     * @param stopValue  stopValue value
-     * @param increment  increment, which will be added to the left side of all nodes
+     * @param from      start value
+     * @param to        end value
+     * @param increment increment, which will be added to the left side of all nodes
      */
-    private void shiftRightNodes(Long startValue, Long stopValue, Long increment) {
+    private void shiftRightNodes(Long from, Long to, Long increment) {
         ctx().update(this.getTable())
                 .set(this.getRightField(), this.getRightField().add(increment))
-                .where(this.getRightField().between(startValue, stopValue))
+                .where(this.getRightField().between(from, to))
                 .execute();
     }
 }
