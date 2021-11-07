@@ -58,6 +58,16 @@ public class TreeNode<N> {
         return parent;
     }
 
+    public int size() {
+        int size = 1;
+
+        for (TreeNode<N> child : children) {
+            size += child.size();
+        }
+
+        return size;
+    }
+
     @Override
     public String toString() {
         return "TreeNode{" +

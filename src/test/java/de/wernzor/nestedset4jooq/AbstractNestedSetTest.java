@@ -2,6 +2,7 @@ package de.wernzor.nestedset4jooq;
 
 import de.wernzor.nestedset4jooq.dao.CategoryNestedSetDao;
 import de.wernzor.nestedset4jooq.dto.CategoryNode;
+import de.wernzor.nestedset4jooq.model.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -60,6 +61,30 @@ abstract class AbstractNestedSetTest {
      */
     boolean contains(List<CategoryNode> list, String name, long left, long right, long level) {
         return list.stream().anyMatch(n -> matches(n, name, left, right, level));
+    }
+
+    /**
+     * Checks if a TreeNode contains a node with the give name, left, right and level value.
+     *
+     * @param node  TreeNode to be searched
+     * @param name  name of the node
+     * @param left  left value of the node
+     * @param right right value of the node
+     * @param level level of the node
+     * @return true, when the TreeNode contains a matching node. otherwise false
+     */
+    boolean contains(TreeNode<CategoryNode> node, String name, long left, long right, long level) {
+        if (matches(node.getNode(), name, left, right, level)) {
+            return true;
+        }
+
+        for (TreeNode<CategoryNode> child : node.getChildren()) {
+            if (contains(child, name, left, right, level)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

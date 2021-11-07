@@ -263,17 +263,38 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
      * @return Tree structure of the complete tree.
      */
     public TreeNode<N> fetchTree() {
-        final List<N> tree = ctx().selectFrom(getTable())
+        final List<N> list = ctx().selectFrom(getTable())
                 .orderBy(getLeftField().asc())
                 .fetchInto(getType());
 
-        if (tree.isEmpty()) {
+        if (list.isEmpty()) {
             return null;
         }
 
-        final N root = tree.iterator().next();
+        final N root = list.iterator().next();
 
-        return getTreeNode(tree, root);
+        return getTreeNode(list, root);
+    }
+
+    /**
+     * Returns the tree to a node. the tree contains the node and all its children and descendants.
+     *
+     * @return Tree structure of the complete tree starting with the node.
+     */
+    public TreeNode<N> fetchTree(N node) {
+        final List<N> list = ctx().selectFrom(getTable())
+                .where(getLeftField().greaterOrEqual(node.getLeft()))
+                .and(getRightField().lessOrEqual(node.getRight()))
+                .orderBy(getLeftField().asc())
+                .fetchInto(getType());
+
+        if (list.isEmpty()) {
+            return null;
+        }
+
+        final N root = list.iterator().next();
+
+        return getTreeNode(list, root);
     }
 
     /**

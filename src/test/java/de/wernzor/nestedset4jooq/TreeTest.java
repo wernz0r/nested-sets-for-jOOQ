@@ -243,7 +243,6 @@ public class TreeTest extends AbstractNestedSetTest {
         assertFalse(thirdTreeNode.getChildren().get(0).hasChildren());
     }
 
-
     @Test
     public void insertTree() {
         var rootNode = new TreeNode<>(getNode("root"));
@@ -271,5 +270,36 @@ public class TreeTest extends AbstractNestedSetTest {
         assertTrue(contains(result, "firstGreatGrandchild", 6, 7, 3));
         assertTrue(contains(result, "secondChild", 10, 13, 1));
         assertTrue(contains(result, "thirdGrandchild", 11, 12, 2));
+
+        var resultAsTree = dao.fetchTree();
+        assertEquals(7, resultAsTree.size());
+    }
+
+    @Test
+    public void fetchTreeWithNode() {
+        var rootNode = new TreeNode<>(getNode("root"));
+
+        var firstChildNode = new TreeNode<>(getNode("firstChild"));
+        firstChildNode.addChild(getNode("firstGrandchild"));
+        firstChildNode.addChild(getNode("secondGrandchild"));
+        firstChildNode.getChildren().get(1).addChild(getNode("firstGreatGrandchild"));
+
+        var secondChildNode = new TreeNode<>(getNode("secondChild"));
+        secondChildNode.addChild(getNode("thirdGrandchild"));
+
+        rootNode.addChild(firstChildNode);
+        rootNode.addChild(secondChildNode);
+
+        dao.insertTree(rootNode);
+
+        var allNodes = dao.findAll();
+
+        var result = dao.fetchTree(getByName(allNodes, "firstChild"));
+
+        assertEquals(4, result.size());
+        assertTrue(contains(result, "firstChild", 2, 9, 1));
+        assertTrue(contains(result, "firstGrandchild", 3, 4, 2));
+        assertTrue(contains(result, "secondGrandchild", 5, 8, 2));
+        assertTrue(contains(result, "firstGreatGrandchild", 6, 7, 3));
     }
 }
