@@ -9,17 +9,17 @@ public class TreeNode<N> {
     private N parent;
     private final List<TreeNode<N>> children;
 
+    public TreeNode(N node) {
+        this.node = node;
+        this.children = new LinkedList<>();
+    }
+
     public boolean isRoot() {
         return this.parent == null;
     }
 
     public boolean hasChildren() {
         return !this.children.isEmpty();
-    }
-
-    public TreeNode(N node) {
-        this.node = node;
-        this.children = new LinkedList<>();
     }
 
     public void addChild(N child) {
@@ -56,10 +56,6 @@ public class TreeNode<N> {
 
     public N getParent() {
         return parent;
-    }
-
-    public void setParent(N parent) {
-        this.parent = parent;
     }
 
     @Override
