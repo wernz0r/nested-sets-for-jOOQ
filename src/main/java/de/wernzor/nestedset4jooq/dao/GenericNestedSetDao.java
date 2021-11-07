@@ -2,6 +2,8 @@ package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.exception.NodeNotFoundException;
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
+import de.wernzor.nestedset4jooq.model.TreeNode;
+import de.wernzor.nestedset4jooq.model.helper.TreeNodeHelper;
 import org.jooq.*;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
@@ -253,6 +255,46 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         update(sourceRecord);
 
         moveNode(sourceRecord, destinationRecord.getLeft() + 1, newLevel - oldLevel);
+    }
+
+    /**
+     * Reads the complete tree and returns it as a tree structure.
+     *
+     * @return Tree structure of the complete tree.
+     */
+    public TreeNode<N, P, T> fetchTree() {
+        final List<N> tree = ctx().selectFrom(getTable())
+                .orderBy(getLeftField().asc())
+                .fetchInto(getType());
+
+        if (tree.isEmpty()) {
+            return null;
+        }
+
+        final N root = tree.iterator().next();
+
+        return getTreeNode(tree, root);
+    }
+
+    /**
+     * Creates a tree structure for a node based on the sorted list of all nodes of the tree.
+     *
+     * @param listOfAllNodes Sorted list of all nodes of the tree
+     * @param node           node which will be transformed in a TreeNode
+     * @return TreeNode of node including all descendants
+     */
+    private TreeNode<N, P, T> getTreeNode(List<N> listOfAllNodes, N node) {
+        final TreeNode<N, P, T> result = new TreeNode<>(node);
+
+        final TreeNodeHelper<N, P, T> helper = new TreeNodeHelper<>(listOfAllNodes);
+
+        final List<N> children = helper.getChildren(node);
+
+        for (N child : children) {
+            result.addChild(getTreeNode(listOfAllNodes, child));
+        }
+
+        return result;
     }
 
     /**
