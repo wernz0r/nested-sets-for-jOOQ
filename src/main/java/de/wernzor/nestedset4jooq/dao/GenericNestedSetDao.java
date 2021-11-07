@@ -277,6 +277,23 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     /**
+     * Inserts a node and all its children / descendants as nested set tree.
+     *
+     * @param treeNode treeNode
+     */
+    public void insertTree(TreeNode<N> treeNode) {
+        if (treeNode.isRoot()) {
+            insertAsRoot(treeNode.getNode());
+        } else {
+            insertAsLastChild(treeNode.getParent(), treeNode.getNode());
+        }
+
+        for (TreeNode<N> child : treeNode.getChildren()) {
+            insertTree(child);
+        }
+    }
+
+    /**
      * Creates a tree structure for a node based on the sorted list of all nodes of the tree.
      *
      * @param sortedTreeNodes Sorted list of all nodes of the tree

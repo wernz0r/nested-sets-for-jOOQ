@@ -24,11 +24,8 @@ public class ChildTest extends AbstractNestedSetTest {
         var result = dao.findAll();
         assertEquals(2, result.size());
 
-        var root = getByName(result, "rootNode");
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-
-        assertTrue(matches(root, "rootNode", 1, 4, 0));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 3, 1));
+        assertTrue(contains(result, "rootNode", 1, 4, 0));
+        assertTrue(contains(result, "firstInsertedChild", 2, 3, 1));
     }
 
     @Test
@@ -45,13 +42,9 @@ public class ChildTest extends AbstractNestedSetTest {
         var result = dao.findAll();
         assertEquals(3, result.size());
 
-        var root = getByName(result, "rootNode");
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-        var secondInsertedChild = getByName(result, "secondInsertedChild");
-
-        assertTrue(matches(root, "rootNode", 1, 6, 0));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 2, 3, 1));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 4, 5, 1));
+        assertTrue(contains(result, "rootNode", 1, 6, 0));
+        assertTrue(contains(result, "secondInsertedChild", 2, 3, 1));
+        assertTrue(contains(result, "firstInsertedChild", 4, 5, 1));
     }
 
     @Test
@@ -65,11 +58,8 @@ public class ChildTest extends AbstractNestedSetTest {
         var result = dao.findAll();
         assertEquals(2, result.size());
 
-        var root = getByName(result, "rootNode");
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-
-        assertTrue(matches(root, "rootNode", 1, 4, 0));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 3, 1));
+        assertTrue(contains(result, "rootNode", 1, 4, 0));
+        assertTrue(contains(result, "firstInsertedChild", 2, 3, 1));
     }
 
     @Test
@@ -86,13 +76,9 @@ public class ChildTest extends AbstractNestedSetTest {
         var result = dao.findAll();
         assertEquals(3, result.size());
 
-        var root = getByName(result, "rootNode");
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-        var secondInsertedChild = getByName(result, "secondInsertedChild");
-
-        assertTrue(matches(root, "rootNode", 1, 6, 0));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 3, 1));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 4, 5, 1));
+        assertTrue(contains(result, "rootNode", 1, 6, 0));
+        assertTrue(contains(result, "firstInsertedChild", 2, 3, 1));
+        assertTrue(contains(result, "secondInsertedChild", 4, 5, 1));
     }
 
     @Test
@@ -140,22 +126,15 @@ public class ChildTest extends AbstractNestedSetTest {
         var childrenOfParent = dao.getChildren(parent);
         assertEquals(3, childrenOfParent.size());
 
-        var firstInsertedChild = getByName(childrenOfParent, "firstInsertedChild");
-        var secondInsertedChild = getByName(childrenOfParent, "secondInsertedChild");
-        var thirdInsertedChild = getByName(childrenOfParent, "thirdInsertedChild");
-
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 7, 1));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 8, 9, 1));
-        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 10, 13, 1));
+        assertTrue(contains(childrenOfParent, "firstInsertedChild", 2, 7, 1));
+        assertTrue(contains(childrenOfParent, "secondInsertedChild", 8, 9, 1));
+        assertTrue(contains(childrenOfParent, "thirdInsertedChild", 10, 13, 1));
 
         var childrenOfChild1 = dao.getChildren(child1);
         assertEquals(2, childrenOfChild1.size());
 
-        var firstGrandchild = getByName(childrenOfChild1, "firstGrandchild");
-        var secondGrandchild = getByName(childrenOfChild1, "secondGrandchild");
-
-        assertTrue(matches(firstGrandchild, "firstGrandchild", 3, 4, 2));
-        assertTrue(matches(secondGrandchild, "secondGrandchild", 5, 6, 2));
+        assertTrue(contains(childrenOfChild1, "firstGrandchild", 3, 4, 2));
+        assertTrue(contains(childrenOfChild1, "secondGrandchild", 5, 6, 2));
     }
 
     @Test
@@ -188,62 +167,43 @@ public class ChildTest extends AbstractNestedSetTest {
 
 
         var rootNode = getByName(result, "rootNode");
-        var firstInsertedChild = getByName(result, "firstInsertedChild");
-        var firstGrandchild = getByName(result, "firstGrandchild");
-        var secondInsertedChild = getByName(result, "secondInsertedChild");
-        var secondGrandchild = getByName(result, "secondGrandchild");
         var thirdInsertedChild = getByName(result, "thirdInsertedChild");
-        var thirdGandchild = getByName(result, "thirdGandchild");
 
-        assertTrue(matches(rootNode, "rootNode", 1, 14, 0));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 2, 5, 1));
-        assertTrue(matches(firstGrandchild, "firstGrandchild", 3, 4, 2));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 6, 9, 1));
-        assertTrue(matches(secondGrandchild, "secondGrandchild", 7, 8, 2));
-        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 10, 13, 1));
-        assertTrue(matches(thirdGandchild, "thirdGandchild", 11, 12, 2));
+        assertTrue(contains(result, "rootNode", 1, 14, 0));
+        assertTrue(contains(result, "firstInsertedChild", 2, 5, 1));
+        assertTrue(contains(result, "firstGrandchild", 3, 4, 2));
+        assertTrue(contains(result, "secondInsertedChild", 6, 9, 1));
+        assertTrue(contains(result, "secondGrandchild", 7, 8, 2));
+        assertTrue(contains(result, "thirdInsertedChild", 10, 13, 1));
+        assertTrue(contains(result, "thirdGandchild", 11, 12, 2));
 
         dao.moveAsFirstChild(thirdInsertedChild, rootNode);
 
         result = dao.findAll();
         assertEquals(7, result.size());
 
-        rootNode = getByName(result, "rootNode");
-        firstInsertedChild = getByName(result, "firstInsertedChild");
-        firstGrandchild = getByName(result, "firstGrandchild");
-        secondInsertedChild = getByName(result, "secondInsertedChild");
-        secondGrandchild = getByName(result, "secondGrandchild");
-        thirdInsertedChild = getByName(result, "thirdInsertedChild");
-        thirdGandchild = getByName(result, "thirdGandchild");
+        assertTrue(contains(result, "rootNode", 1, 14, 0));
+        assertTrue(contains(result, "thirdInsertedChild", 2, 5, 1));
+        assertTrue(contains(result, "thirdGandchild", 3, 4, 2));
+        assertTrue(contains(result, "firstInsertedChild", 6, 9, 1));
+        assertTrue(contains(result, "firstGrandchild", 7, 8, 2));
+        assertTrue(contains(result, "secondInsertedChild", 10, 13, 1));
+        assertTrue(contains(result, "secondGrandchild", 11, 12, 2));
 
-        assertTrue(matches(rootNode, "rootNode", 1, 14, 0));
-        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 2, 5, 1));
-        assertTrue(matches(thirdGandchild, "thirdGandchild", 3, 4, 2));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 6, 9, 1));
-        assertTrue(matches(firstGrandchild, "firstGrandchild", 7, 8, 2));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 10, 13, 1));
-        assertTrue(matches(secondGrandchild, "secondGrandchild", 11, 12, 2));
-
+        var firstGrandchild = getByName(result, "firstGrandchild");
+        var secondGrandchild = getByName(result, "secondGrandchild");
 
         dao.moveAsFirstChild(secondGrandchild, firstGrandchild);
 
         result = dao.findAll();
         assertEquals(7, result.size());
 
-        rootNode = getByName(result, "rootNode");
-        firstInsertedChild = getByName(result, "firstInsertedChild");
-        firstGrandchild = getByName(result, "firstGrandchild");
-        secondInsertedChild = getByName(result, "secondInsertedChild");
-        secondGrandchild = getByName(result, "secondGrandchild");
-        thirdInsertedChild = getByName(result, "thirdInsertedChild");
-        thirdGandchild = getByName(result, "thirdGandchild");
-
-        assertTrue(matches(rootNode, "rootNode", 1, 14, 0));
-        assertTrue(matches(thirdInsertedChild, "thirdInsertedChild", 2, 5, 1));
-        assertTrue(matches(thirdGandchild, "thirdGandchild", 3, 4, 2));
-        assertTrue(matches(firstInsertedChild, "firstInsertedChild", 6, 11, 1));
-        assertTrue(matches(firstGrandchild, "firstGrandchild", 7, 10, 2));
-        assertTrue(matches(secondGrandchild, "secondGrandchild", 8, 9, 3));
-        assertTrue(matches(secondInsertedChild, "secondInsertedChild", 12, 13, 1));
+        assertTrue(contains(result, "rootNode", 1, 14, 0));
+        assertTrue(contains(result, "thirdInsertedChild", 2, 5, 1));
+        assertTrue(contains(result, "thirdGandchild", 3, 4, 2));
+        assertTrue(contains(result, "firstInsertedChild", 6, 11, 1));
+        assertTrue(contains(result, "firstGrandchild", 7, 10, 2));
+        assertTrue(contains(result, "secondGrandchild", 8, 9, 3));
+        assertTrue(contains(result, "secondInsertedChild", 12, 13, 1));
     }
 }
