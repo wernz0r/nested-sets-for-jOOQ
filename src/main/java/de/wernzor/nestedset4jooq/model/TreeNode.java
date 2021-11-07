@@ -3,11 +3,11 @@ package de.wernzor.nestedset4jooq.model;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TreeNode<N extends NestedSetNode<P, T>, P, T> {
+public class TreeNode<N> {
 
     private final N node;
     private N parent;
-    private final List<TreeNode<N, P, T>> children;
+    private final List<TreeNode<N>> children;
 
     public boolean isRoot() {
         return this.parent == null;
@@ -23,26 +23,26 @@ public class TreeNode<N extends NestedSetNode<P, T>, P, T> {
     }
 
     public void addChild(N child) {
-        TreeNode<N, P, T> childNode = new TreeNode<>(child);
+        TreeNode<N> childNode = new TreeNode<>(child);
         childNode.parent = this.node;
         this.children.add(childNode);
     }
 
-    public void addChild(TreeNode<N, P, T> child) {
+    public void addChild(TreeNode<N> child) {
         child.parent = this.node;
         this.children.add(child);
     }
 
-    public List<TreeNode<N, P, T>> getChildren() {
+    public List<TreeNode<N>> getChildren() {
         return children;
     }
 
-    public TreeNode<N, P, T> findTreeNode(Comparable<N> cmp) {
+    public TreeNode<N> findTreeNode(Comparable<N> cmp) {
         if (cmp.compareTo(this.node) == 0) {
             return this;
         }
 
-        for (TreeNode<N, P, T> element : this.children) {
+        for (TreeNode<N> element : this.children) {
             if (cmp.compareTo(element.node) == 0)
                 return element;
         }

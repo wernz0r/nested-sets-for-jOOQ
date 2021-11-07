@@ -262,7 +262,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
      *
      * @return Tree structure of the complete tree.
      */
-    public TreeNode<N, P, T> fetchTree() {
+    public TreeNode<N> fetchTree() {
         final List<N> tree = ctx().selectFrom(getTable())
                 .orderBy(getLeftField().asc())
                 .fetchInto(getType());
@@ -283,8 +283,8 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
      * @param node           node which will be transformed in a TreeNode
      * @return TreeNode of node including all descendants
      */
-    private TreeNode<N, P, T> getTreeNode(List<N> listOfAllNodes, N node) {
-        final TreeNode<N, P, T> result = new TreeNode<>(node);
+    private TreeNode<N> getTreeNode(List<N> listOfAllNodes, N node) {
+        final TreeNode<N> result = new TreeNode<>(node);
 
         final TreeNodeHelper<N, P, T> helper = new TreeNodeHelper<>(listOfAllNodes);
 
