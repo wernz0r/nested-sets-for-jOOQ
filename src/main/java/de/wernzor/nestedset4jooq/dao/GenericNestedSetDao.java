@@ -279,19 +279,19 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     /**
      * Creates a tree structure for a node based on the sorted list of all nodes of the tree.
      *
-     * @param listOfAllNodes Sorted list of all nodes of the tree
-     * @param node           node which will be transformed in a TreeNode
+     * @param sortedTreeNodes Sorted list of all nodes of the tree
+     * @param node            node which will be transformed in a TreeNode
      * @return TreeNode of node including all descendants
      */
-    private TreeNode<N> getTreeNode(List<N> listOfAllNodes, N node) {
+    private TreeNode<N> getTreeNode(List<N> sortedTreeNodes, N node) {
         final TreeNode<N> result = new TreeNode<>(node);
 
-        final TreeNodeHelper<N, P, T> helper = new TreeNodeHelper<>(listOfAllNodes);
+        final TreeNodeHelper<N, P, T> helper = new TreeNodeHelper<>(sortedTreeNodes);
 
         final List<N> children = helper.getChildren(node);
 
         for (N child : children) {
-            result.addChild(getTreeNode(listOfAllNodes, child));
+            result.addChild(getTreeNode(sortedTreeNodes, child));
         }
 
         return result;
