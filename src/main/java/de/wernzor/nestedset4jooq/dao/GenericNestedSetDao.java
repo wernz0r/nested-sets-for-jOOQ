@@ -258,6 +258,29 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     /**
+     * Makes the source node the last child of the destination node.
+     *
+     * @param source      source node
+     * @param destination destination node
+     */
+    public void moveAsLastChild(N source, N destination) {
+        if (source == destination) {
+            throw new IllegalArgumentException("Cannot make node the last child of itself.");
+        }
+
+        final N sourceRecord = fetch(source);
+        final N destinationRecord = fetch(destination);
+
+        final Long oldLevel = sourceRecord.getLevel();
+        final Long newLevel = destinationRecord.getLevel() + 1;
+
+        sourceRecord.setLevel(newLevel);
+        update(sourceRecord);
+
+        moveNode(sourceRecord, destinationRecord.getRight(), newLevel - oldLevel);
+    }
+
+    /**
      * Reads the complete tree and returns it as a tree structure.
      *
      * @return Tree structure of the complete tree.
@@ -337,23 +360,23 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
 
     /**
      * Moves a node and all its children to new location inside the tree. The new location is defined by the
-     * from value.
+     * leftDest value.
      *
      * @param node            node which is to be moved
-     * @param from            new position of the node
+     * @param leftDest        new position of the node
      * @param levelDifference level difference which will result in moving the node
      */
-    private void moveNode(N node, Long from, Long levelDifference) {
+    private void moveNode(N node, Long leftDest, Long levelDifference) {
         final long sizeOfTree = node.getRight() - node.getLeft() + 1;
 
-        // create a gap of the size of the tree
-        shiftNodes(from, sizeOfTree);
+        // create a gap at the new position in the size of the tree
+        shiftNodes(leftDest, sizeOfTree);
 
         Long left = node.getLeft();
         Long right = node.getRight();
 
         // if the node was also shifted, the size of the tree must be added
-        if (left >= from) {
+        if (left >= leftDest) {
             left += sizeOfTree;
             right += sizeOfTree;
         }
@@ -366,7 +389,7 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .execute();
 
         // increment all nodes between left and right in the size of the tree
-        shiftNodes(left, right, from - left);
+        shiftNodes(left, right, leftDest - left);
 
         // close gap
         shiftNodes(right + 1, -sizeOfTree);
