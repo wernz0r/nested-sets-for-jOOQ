@@ -304,6 +304,29 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
     }
 
     /**
+     * Makes the source node the previous sibling of the destination node.
+     *
+     * @param source      source node
+     * @param destination destination node
+     */
+    public void moveAsPrevSibling(N source, N destination) {
+        if (source == destination) {
+            throw new IllegalArgumentException("Cannot make node the previous sibling of itself.");
+        }
+
+        final N sourceRecord = fetch(source);
+        final N destinationRecord = fetch(destination);
+
+        final Long oldLevel = sourceRecord.getLevel();
+        final Long newLevel = destinationRecord.getLevel();
+
+        sourceRecord.setLevel(newLevel);
+        update(sourceRecord);
+
+        moveNode(sourceRecord, destinationRecord.getLeft(), newLevel - oldLevel);
+    }
+
+    /**
      * Reads the complete tree and returns it as a tree structure.
      *
      * @return Tree structure of the complete tree.
