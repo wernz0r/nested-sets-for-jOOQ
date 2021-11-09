@@ -1,6 +1,5 @@
-package de.wernzor.nestedset4jooq.dto;
+package de.wernzor.nestedset4jooq.model;
 
-import de.wernzor.nestedset4jooq.model.NestedSetNode;
 import de.wernzor.nestedset4jooq.test.tables.pojos.Category;
 
 public class CategoryNode extends Category implements NestedSetNode<Category, Long> {

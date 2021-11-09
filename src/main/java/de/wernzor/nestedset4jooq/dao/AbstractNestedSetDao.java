@@ -2,21 +2,19 @@ package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.exception.NodeNotFoundException;
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
-import de.wernzor.nestedset4jooq.model.TreeNode;
-import de.wernzor.nestedset4jooq.model.helper.TreeNodeHelper;
 import org.jooq.*;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 
 import java.util.List;
 
-public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P, T>, P, T> extends DAOImpl<R, N, T> {
+public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P, T>, P, T> extends DAOImpl<R, N, T> {
 
-    protected GenericNestedSetDao(Table<R> table, Class<N> type) {
+    protected AbstractNestedSetDao(Table<R> table, Class<N> type) {
         super(table, type);
     }
 
-    protected GenericNestedSetDao(Table<R> table, Class<N> type, Configuration configuration) {
+    protected AbstractNestedSetDao(Table<R> table, Class<N> type, Configuration configuration) {
         super(table, type, configuration);
     }
 
@@ -164,6 +162,37 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
                 .where(getLeftField().greaterThan(nodeRecord.getLeft()))
                 .and(getRightField().lessThan(nodeRecord.getRight()))
                 .and(generationIsZero.or(getLevelField().lessOrEqual(nodeRecord.getLevel() + numberOfGenerations)))
+                .orderBy(getLeftField().asc())
+                .fetchInto(getType());
+    }
+
+    /**
+     * Returns the node with all its descendants as a sorted list. The node itself  will be at the beginning of the
+     * list.
+     *
+     * @param node Node whose descendants will be returned.
+     * @return Sorted list of descendants of the node including the node.
+     */
+    public List<N> getNodeAndAllDescendants(N node) {
+        final N nodeRecord = fetch(node);
+
+        return ctx().select()
+                .from(getTable())
+                .where(getLeftField().greaterOrEqual(nodeRecord.getLeft()))
+                .and(getRightField().lessOrEqual(nodeRecord.getRight()))
+                .orderBy(getLeftField().asc())
+                .fetchInto(getType());
+    }
+
+    /**
+     * Returns all entries as sorted list. The sorted list represents the order of the tree.
+     *
+     * @return Sorted list containing all entries.
+     */
+    @Override
+    public List<N> findAll() {
+        return ctx()
+                .selectFrom(getTable())
                 .orderBy(getLeftField().asc())
                 .fetchInto(getType());
     }
@@ -324,84 +353,6 @@ public abstract class GenericNestedSetDao<R extends UpdatableRecord<R>, N extend
         update(sourceRecord);
 
         moveNode(sourceRecord, destinationRecord.getLeft(), newLevel - oldLevel);
-    }
-
-    /**
-     * Reads the complete tree and returns it as a tree structure.
-     *
-     * @return Tree structure of the complete tree.
-     */
-    public TreeNode<N> fetchTree() {
-        final List<N> list = ctx().selectFrom(getTable())
-                .orderBy(getLeftField().asc())
-                .fetchInto(getType());
-
-        if (list.isEmpty()) {
-            return null;
-        }
-
-        final N root = list.iterator().next();
-
-        return getTreeNode(list, root);
-    }
-
-    /**
-     * Returns the tree to a node. the tree contains the node and all its children and descendants.
-     *
-     * @return Tree structure of the complete tree starting with the node.
-     */
-    public TreeNode<N> fetchTree(N node) {
-        final List<N> list = ctx().selectFrom(getTable())
-                .where(getLeftField().greaterOrEqual(node.getLeft()))
-                .and(getRightField().lessOrEqual(node.getRight()))
-                .orderBy(getLeftField().asc())
-                .fetchInto(getType());
-
-        if (list.isEmpty()) {
-            return null;
-        }
-
-        final N root = list.iterator().next();
-
-        return getTreeNode(list, root);
-    }
-
-    /**
-     * Inserts a node and all its children / descendants as nested set tree.
-     *
-     * @param treeNode treeNode
-     */
-    public void insertTree(TreeNode<N> treeNode) {
-        if (treeNode.isRoot()) {
-            insertAsRoot(treeNode.getNode());
-        } else {
-            insertAsLastChild(treeNode.getParent(), treeNode.getNode());
-        }
-
-        for (TreeNode<N> child : treeNode.getChildren()) {
-            insertTree(child);
-        }
-    }
-
-    /**
-     * Creates a tree structure for a node based on the sorted list of all nodes of the tree.
-     *
-     * @param sortedTreeNodes Sorted list of all nodes of the tree
-     * @param node            node which will be transformed in a TreeNode
-     * @return TreeNode of node including all descendants
-     */
-    private TreeNode<N> getTreeNode(List<N> sortedTreeNodes, N node) {
-        final TreeNode<N> result = new TreeNode<>(node);
-
-        final TreeNodeHelper<N, P, T> helper = new TreeNodeHelper<>(sortedTreeNodes);
-
-        final List<N> children = helper.getChildren(node);
-
-        for (N child : children) {
-            result.addChild(getTreeNode(sortedTreeNodes, child));
-        }
-
-        return result;
     }
 
     /**
