@@ -1,7 +1,7 @@
 package de.wernzor.nestedset4jooq.helper;
 
 import de.wernzor.nestedset4jooq.model.CategoryNode;
-import de.wernzor.nestedset4jooq.model.TreeNode;
+import de.wernzor.nestedset4jooq.model.tree.TreeNode;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.helper.TestHelper;
 import de.wernzor.nestedset4jooq.model.CategoryNode;
-import de.wernzor.nestedset4jooq.model.TreeNode;
+import de.wernzor.nestedset4jooq.model.tree.TreeNode;
 import de.wernzor.nestedset4jooq.test.tables.pojos.Category;
 import de.wernzor.nestedset4jooq.test.tables.records.CategoryRecord;
 import org.junit.jupiter.api.Test;

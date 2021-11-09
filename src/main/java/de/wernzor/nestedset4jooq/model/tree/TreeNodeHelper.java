@@ -1,4 +1,4 @@
-package de.wernzor.nestedset4jooq.model.helper;
+package de.wernzor.nestedset4jooq.model.tree;
 
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
 

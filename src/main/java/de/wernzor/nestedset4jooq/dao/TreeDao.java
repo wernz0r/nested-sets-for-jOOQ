@@ -1,8 +1,8 @@
 package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.model.NestedSetNode;
-import de.wernzor.nestedset4jooq.model.TreeNode;
-import de.wernzor.nestedset4jooq.model.helper.TreeNodeHelper;
+import de.wernzor.nestedset4jooq.model.tree.TreeNode;
+import de.wernzor.nestedset4jooq.model.tree.TreeNodeHelper;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;

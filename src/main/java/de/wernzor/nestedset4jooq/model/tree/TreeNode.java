@@ -1,4 +1,4 @@
-package de.wernzor.nestedset4jooq.model;
+package de.wernzor.nestedset4jooq.model.tree;
 
 import java.util.LinkedList;
 import java.util.List;
