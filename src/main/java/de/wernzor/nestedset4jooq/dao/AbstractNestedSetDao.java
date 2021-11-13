@@ -8,7 +8,9 @@ import org.jooq.impl.DSL;
 
 import java.util.List;
 
-public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P, T>, P, T> extends DAOImpl<R, N, T> {
+public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N extends NestedSetNode<P, T>, P, T>
+        extends DAOImpl<R, N, T>
+        implements NestedSetDao<N> {
 
     protected AbstractNestedSetDao(Table<R> table, Class<N> type) {
         super(table, type);
@@ -29,6 +31,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      *
      * @param node node to be inserted as root
      */
+    @Override
     public void insertAsRoot(N node) {
         node.setLeft(1L);
         node.setRight(2L);
@@ -43,6 +46,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param parent parent node
      * @param child  child node which will be added as first child
      */
+    @Override
     public void insertAsFirstChild(N parent, N child) {
         final N parentRecord = fetch(parent);
 
@@ -61,6 +65,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param parent parent node
      * @param child  child node which will be added as last child
      */
+    @Override
     public void insertAsLastChild(N parent, N child) {
         final N parentRecord = fetch(parent);
 
@@ -79,6 +84,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param existingNode Node to which the sibling is to be added on the left side
      * @param sibling      Sibling which is to be added
      */
+    @Override
     public void insertAsPrevSibling(N existingNode, N sibling) {
         final N nodeRecord = fetch(existingNode);
 
@@ -97,6 +103,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param existingNode Node to which the sibling is to be added on the right side
      * @param sibling      Sibling which is to be added
      */
+    @Override
     public void insertAsNextSibling(N existingNode, N sibling) {
         final N nodeRecord = fetch(existingNode);
 
@@ -115,6 +122,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node node
      * @return true, when there are children. Otherwise false.
      */
+    @Override
     public boolean hasChildren(N node) {
         final N nodeRecord = fetch(node);
 
@@ -127,6 +135,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node whose children are to be determinded
      * @return Sorted list of all children of the node
      */
+    @Override
     public List<N> getChildren(N node) {
         return getDescendants(node, 1);
     }
@@ -138,6 +147,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node whose descendants are to be determined
      * @return Sorted list of all descendants of the node
      */
+    @Override
     public List<N> getDescendants(N node) {
         return getDescendants(node, 0);
     }
@@ -152,6 +162,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      *                            returned
      * @return Sorted list of descendants of the node.
      */
+    @Override
     public List<N> getDescendants(N node, int numberOfGenerations) {
         final N nodeRecord = fetch(node);
 
@@ -173,6 +184,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node whose descendants will be returned.
      * @return Sorted list of descendants of the node including the node.
      */
+    @Override
     public List<N> getNodeAndAllDescendants(N node) {
         final N nodeRecord = fetch(node);
 
@@ -207,6 +219,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      *                          returned
      * @return Sorted list of ancestors of the node
      */
+    @Override
     public List<N> getAncestors(N node, int numberOfAncestors) {
         final N nodeRecord = fetch(node);
 
@@ -228,6 +241,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node whose ancestors are to be determined
      * @return Sorted list of all ancestors of the node
      */
+    @Override
     public List<N> getAncestors(N node) {
         return getAncestors(node, 0);
     }
@@ -238,6 +252,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node whose parent should be returned
      * @return Parent node
      */
+    @Override
     public N getParent(N node) {
         return getAncestors(node).get(0);
     }
@@ -269,6 +284,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param source      source node
      * @param destination destination node
      */
+    @Override
     public void moveAsFirstChild(N source, N destination) {
         if (source == destination) {
             throw new IllegalArgumentException("Cannot make node the first child of itself.");
@@ -292,6 +308,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param source      source node
      * @param destination destination node
      */
+    @Override
     public void moveAsLastChild(N source, N destination) {
         if (source == destination) {
             throw new IllegalArgumentException("Cannot make node the last child of itself.");
@@ -315,6 +332,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param source      source node
      * @param destination destination node
      */
+    @Override
     public void moveAsNextSibling(N source, N destination) {
         if (source == destination) {
             throw new IllegalArgumentException("Cannot make node the next sibling of itself.");
@@ -338,6 +356,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param source      source node
      * @param destination destination node
      */
+    @Override
     public void moveAsPrevSibling(N source, N destination) {
         if (source == destination) {
             throw new IllegalArgumentException("Cannot make node the previous sibling of itself.");

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import static de.wernzor.nestedset4jooq.test.tables.Category.CATEGORY;
 
 @Repository
-public class CategoryNestedSetDao extends AbstractNestedSetDao<CategoryRecord, CategoryNode, Category, Long> {
+public class CategoryNestedSetDao extends AbstractNestedSetDao<CategoryRecord, CategoryNode, Category, Long>
+        implements NestedSetDao<CategoryNode> {
 
     @Autowired
     public CategoryNestedSetDao(Configuration configuration) {
