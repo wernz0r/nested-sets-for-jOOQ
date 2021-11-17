@@ -178,7 +178,7 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
     }
 
     /**
-     * Returns the node with all its descendants as a sorted list. The node itself  will be at the beginning of the
+     * Returns the node with all its descendants as a sorted list. The node itself will be at the beginning of the
      * list.
      *
      * @param node Node whose descendants will be returned.

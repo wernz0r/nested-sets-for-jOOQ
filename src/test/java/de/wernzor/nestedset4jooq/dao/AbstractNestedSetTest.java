@@ -21,7 +21,7 @@ public class AbstractNestedSetTest {
     }
 
     @Test
-    public void insertAsFirstChildWhenNoChildExists() {
+    public void insertAsFirstChild() {
         var parent = TestHelper.getNode("rootNode");
         dao.insertAsRoot(parent);
 
@@ -33,20 +33,11 @@ public class AbstractNestedSetTest {
 
         assertTrue(TestHelper.contains(result, "rootNode", 1, 4, 0));
         assertTrue(TestHelper.contains(result, "firstChild", 2, 3, 1));
-    }
-
-    @Test
-    public void insertAsFirstChildWhenChildExists() {
-        var parent = TestHelper.getNode("rootNode");
-        dao.insertAsRoot(parent);
-
-        var child1 = TestHelper.getNode("firstChild");
-        dao.insertAsFirstChild(parent, child1);
 
         var child2 = TestHelper.getNode("secondChild");
         dao.insertAsFirstChild(parent, child2);
 
-        var result = dao.findAll();
+        result = dao.findAll();
         assertEquals(3, result.size());
 
         assertTrue(TestHelper.contains(result, "rootNode", 1, 6, 0));
@@ -55,7 +46,7 @@ public class AbstractNestedSetTest {
     }
 
     @Test
-    public void insertAsLastChildWhenNoChildExists() {
+    public void insertAsLastChild() {
         var parent = TestHelper.getNode("rootNode");
         dao.insertAsRoot(parent);
 
@@ -67,20 +58,11 @@ public class AbstractNestedSetTest {
 
         assertTrue(TestHelper.contains(result, "rootNode", 1, 4, 0));
         assertTrue(TestHelper.contains(result, "firstChild", 2, 3, 1));
-    }
-
-    @Test
-    public void insertAsLastChildWhenChildExists() {
-        var parent = TestHelper.getNode("rootNode");
-        dao.insertAsRoot(parent);
-
-        var child1 = TestHelper.getNode("firstChild");
-        dao.insertAsLastChild(parent, child1);
 
         var child2 = TestHelper.getNode("secondChild");
         dao.insertAsLastChild(parent, child2);
 
-        var result = dao.findAll();
+        result = dao.findAll();
         assertEquals(3, result.size());
 
         assertTrue(TestHelper.contains(result, "rootNode", 1, 6, 0));
@@ -523,8 +505,8 @@ public class AbstractNestedSetTest {
         var grandchild1 = TestHelper.getNode("firstGrandchild");
         dao.insertAsLastChild(child1, grandchild1);
 
-        var grandGrandchild = TestHelper.getNode("firstGreatGrandchild");
-        dao.insertAsLastChild(grandchild1, grandGrandchild);
+        var greatGrandchild = TestHelper.getNode("firstGreatGrandchild");
+        dao.insertAsLastChild(grandchild1, greatGrandchild);
 
         var child2 = TestHelper.getNode("secondChild");
         dao.insertAsLastChild(parent, child2);
@@ -560,8 +542,8 @@ public class AbstractNestedSetTest {
         var grandchild1 = TestHelper.getNode("firstGrandchild");
         dao.insertAsLastChild(child1, grandchild1);
 
-        var grandGrandchild = TestHelper.getNode("firstGreatGrandchild");
-        dao.insertAsLastChild(grandchild1, grandGrandchild);
+        var greadGrandchild = TestHelper.getNode("firstGreatGrandchild");
+        dao.insertAsLastChild(grandchild1, greadGrandchild);
 
         var child2 = TestHelper.getNode("secondChild");
         dao.insertAsLastChild(parent, child2);
@@ -569,22 +551,68 @@ public class AbstractNestedSetTest {
         var grandchild2 = TestHelper.getNode("secondGrandchild");
         dao.insertAsLastChild(child2, grandchild2);
 
-        var result = dao.getAncestors(grandGrandchild);
+        var result = dao.getAncestors(greadGrandchild);
         assertEquals(3, result.size());
 
-        result = dao.getAncestors(grandGrandchild, 1);
+        result = dao.getAncestors(greadGrandchild, 1);
         assertEquals(1, result.size());
         assertTrue(TestHelper.contains(result, "firstGrandchild", 3, 6, 2));
 
-        result = dao.getAncestors(grandGrandchild, 2);
+        result = dao.getAncestors(greadGrandchild, 2);
         assertEquals(2, result.size());
         assertTrue(TestHelper.contains(result, "firstGrandchild", 3, 6, 2));
         assertTrue(TestHelper.contains(result, "firstChild", 2, 7, 1));
 
-        result = dao.getAncestors(grandGrandchild, 3);
+        result = dao.getAncestors(greadGrandchild, 3);
         assertEquals(3, result.size());
         assertTrue(TestHelper.contains(result, "firstGrandchild", 3, 6, 2));
         assertTrue(TestHelper.contains(result, "firstChild", 2, 7, 1));
         assertTrue(TestHelper.contains(result, "rootNode", 1, 12, 0));
+    }
+
+    @Test
+    public void getNodeAndAllDescendants() {
+        var parent = TestHelper.getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var child1 = TestHelper.getNode("firstChild");
+        dao.insertAsLastChild(parent, child1);
+
+        var grandchild1 = TestHelper.getNode("firstGrandchild");
+        dao.insertAsLastChild(child1, grandchild1);
+
+        var greatGrandchild = TestHelper.getNode("firstGreatGrandchild");
+        dao.insertAsLastChild(grandchild1, greatGrandchild);
+
+        var child2 = TestHelper.getNode("secondChild");
+        dao.insertAsLastChild(parent, child2);
+
+        var grandchild2 = TestHelper.getNode("secondGrandchild");
+        dao.insertAsLastChild(child2, grandchild2);
+
+        var result = dao.getNodeAndAllDescendants(child1);
+        assertEquals(3, result.size());
+
+        assertTrue(TestHelper.contains(result, "firstChild", 2, 7, 1));
+        assertTrue(TestHelper.contains(result, "firstGrandchild", 3, 6, 2));
+        assertTrue(TestHelper.contains(result, "firstGreatGrandchild", 4, 5, 3));
+
+        result = dao.getNodeAndAllDescendants(child2);
+        assertEquals(2, result.size());
+
+        assertTrue(TestHelper.contains(result, "secondChild", 8, 11, 1));
+        assertTrue(TestHelper.contains(result, "secondGrandchild", 9, 10, 2));
+    }
+
+    @Test
+    public void isRoot() {
+        var parent = TestHelper.getNode("rootNode");
+        dao.insertAsRoot(parent);
+
+        var child1 = TestHelper.getNode("firstChild");
+        dao.insertAsLastChild(parent, child1);
+
+        assertTrue(dao.isRoot(parent));
+        assertFalse(dao.isRoot(child1));
     }
 }
