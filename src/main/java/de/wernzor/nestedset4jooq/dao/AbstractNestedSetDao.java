@@ -428,6 +428,12 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
         return nodeRecord;
     }
 
+    /**
+     * Checks wether a given node is a root node.
+     *
+     * @param node node to be checked
+     * @return true, when node is root. false otherwise.
+     */
     @Override
     public boolean isRoot(N node) {
         final N nodeRecord = fetch(node);
