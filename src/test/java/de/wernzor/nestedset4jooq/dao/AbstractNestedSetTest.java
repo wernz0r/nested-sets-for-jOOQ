@@ -1,6 +1,7 @@
 package de.wernzor.nestedset4jooq.dao;
 
 import de.wernzor.nestedset4jooq.helper.TestHelper;
+import de.wernzor.nestedset4jooq.model.CategoryNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class AbstractNestedSetTest {
+public class AbstractNestedSetTest {
 
-    final CategoryNestedSetDao dao;
+    public final NestedSetDao<CategoryNode> dao;
 
     @Autowired
-    AbstractNestedSetTest(CategoryNestedSetDao dao) {
+    public AbstractNestedSetTest(NestedSetDao<CategoryNode> dao) {
         this.dao = dao;
     }
 

@@ -1,7 +1,6 @@
 package de.wernzor.nestedset4jooq.helper;
 
 import de.wernzor.nestedset4jooq.model.CategoryNode;
-import de.wernzor.nestedset4jooq.model.tree.TreeNode;
 
 import java.util.List;
 
@@ -48,30 +47,6 @@ public class TestHelper {
      */
     public static boolean contains(List<CategoryNode> list, String name, long left, long right, long level) {
         return list.stream().anyMatch(n -> matches(n, name, left, right, level));
-    }
-
-    /**
-     * Checks if a TreeNode contains a node with the give name, left, right and level value.
-     *
-     * @param node  TreeNode to be searched
-     * @param name  name of the node
-     * @param left  left value of the node
-     * @param right right value of the node
-     * @param level level of the node
-     * @return true, when the TreeNode contains a matching node. otherwise false
-     */
-    public static boolean contains(TreeNode<CategoryNode> node, String name, long left, long right, long level) {
-        if (matches(node.getNode(), name, left, right, level)) {
-            return true;
-        }
-
-        for (TreeNode<CategoryNode> child : node.getChildren()) {
-            if (contains(child, name, left, right, level)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

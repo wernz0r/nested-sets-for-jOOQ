@@ -4,6 +4,12 @@ import java.util.List;
 
 public interface NestedSetDao<N> {
 
+    N fetch(N node);
+
+    void delete(N node);
+
+    List<N> findAll();
+
     void insertAsRoot(N node);
 
     void insertAsFirstChild(N parent, N child);
@@ -15,6 +21,8 @@ public interface NestedSetDao<N> {
     void insertAsNextSibling(N existingNode, N sibling);
 
     boolean hasChildren(N node);
+
+    boolean isRoot(N node);
 
     List<N> getChildren(N node);
 

@@ -418,13 +418,21 @@ public abstract class AbstractNestedSetDao<R extends UpdatableRecord<R>, N exten
      * @param node Node to be read
      * @return Record
      */
-    private N fetch(N node) {
+    @Override
+    public N fetch(N node) {
         final N nodeRecord = findById(node.getId());
 
         if (nodeRecord == null) {
             throw new NodeNotFoundException("Node with id " + node.getId() + " not found.");
         }
         return nodeRecord;
+    }
+
+    @Override
+    public boolean isRoot(N node) {
+        final N nodeRecord = fetch(node);
+
+        return 0 == nodeRecord.getLevel();
     }
 
     /**
