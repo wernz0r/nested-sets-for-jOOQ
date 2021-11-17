@@ -1,4 +1,4 @@
-package de.wernzor.nestedset4jooq.exception;
+package de.wernz0r.nestedsets4jooq.exception;
 
 public class NodeNotFoundException extends RuntimeException {
 

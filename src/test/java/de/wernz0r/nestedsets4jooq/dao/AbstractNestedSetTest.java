@@ -1,7 +1,7 @@
-package de.wernzor.nestedset4jooq.dao;
+package de.wernz0r.nestedsets4jooq.dao;
 
-import de.wernzor.nestedset4jooq.helper.TestHelper;
-import de.wernzor.nestedset4jooq.model.CategoryNode;
+import de.wernz0r.nestedsets4jooq.helper.TestHelper;
+import de.wernz0r.nestedsets4jooq.model.CategoryNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

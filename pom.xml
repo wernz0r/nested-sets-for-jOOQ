@@ -4,9 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.wernzor</groupId>
-    <artifactId>nestedset4jooq</artifactId>
+    <groupId>de.wernz0r</groupId>
+    <artifactId>nested-sets-for-jooq</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <name>Nested Sets For jOOQ</name>
+    <description>Java library to easily handle nested sets with jOOQ</description>
+    <url>https://github.com/wernz0r/nested-sets-for-jOOQ</url>
 
     <developers>
         <developer>
@@ -37,16 +41,6 @@
 
     <dependencies>
         <dependency>
-            <!-- Use org.jooq                for the Open Source Edition
-                     org.jooq.pro            for commercial editions with Java 17 support,
-                     org.jooq.pro-java-11    for commercial editions with Java 11 support,
-                     org.jooq.pro-java-8     for commercial editions with Java 8 support,
-                     org.jooq.trial          for the free trial edition with Java 17 support,
-                     org.jooq.trial-java-11  for the free trial edition with Java 11 support,
-                     org.jooq.trial-java-8   for the free trial edition with Java 8 support
-
-                 Note: Only the Open Source Edition is hosted on Maven Central.
-                       Import the others manually from your distribution -->
             <groupId>org.jooq</groupId>
             <artifactId>jooq-meta-extensions</artifactId>
             <version>${jooq.version}</version>
@@ -94,17 +88,12 @@
                                 <database>
                                     <name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
                                     <properties>
-                                        <!-- Specify the location of your XML script. -->
                                         <property>
                                             <key>scripts</key>
                                             <value>
                                                 ${project.basedir}/src/test/resources/schema.sql
                                             </value>
                                         </property>
-
-                                        <!-- The property "changeLogParameters.contexts" will be passed on to the
-                                             liquibase.database.Database.update() call (jOOQ 3.13.2+).
-                                             See https://www.liquibase.org/documentation/contexts.html -->
                                         <property>
                                             <key>changeLogParameters.contexts</key>
                                             <value>!test</value>
@@ -123,7 +112,7 @@
                                 </generate>
                                 <target>
                                     <!-- this package will not be included in the final jar, see maven-jar-plugin -->
-                                    <packageName>de.wernzor.nestedset4jooq.test</packageName>
+                                    <packageName>de.wernz0r.nestedsets4jooq.test</packageName>
                                 </target>
                             </generator>
                         </configuration>
@@ -148,7 +137,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <excludes>
-                        <exclude>de/wernzor/nestedset4jooq/test/**</exclude>
+                        <exclude>de/wernz0r/nestedsets4jooq/test/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

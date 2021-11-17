@@ -1,6 +1,6 @@
-package de.wernzor.nestedset4jooq.helper;
+package de.wernz0r.nestedsets4jooq.helper;
 
-import de.wernzor.nestedset4jooq.model.CategoryNode;
+import de.wernz0r.nestedsets4jooq.model.CategoryNode;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package de.wernzor.nestedset4jooq;
+package de.wernz0r.nestedsets4jooq;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

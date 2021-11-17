@@ -1,6 +1,6 @@
-package de.wernzor.nestedset4jooq.model;
+package de.wernz0r.nestedsets4jooq.model;
 
-import de.wernzor.nestedset4jooq.test.tables.pojos.Category;
+import de.wernz0r.nestedsets4jooq.test.tables.pojos.Category;
 
 public class CategoryNode extends Category implements NestedSetNode<Category, Long> {
     @Override

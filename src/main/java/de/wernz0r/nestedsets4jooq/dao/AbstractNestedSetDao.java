@@ -1,7 +1,7 @@
-package de.wernzor.nestedset4jooq.dao;
+package de.wernz0r.nestedsets4jooq.dao;
 
-import de.wernzor.nestedset4jooq.exception.NodeNotFoundException;
-import de.wernzor.nestedset4jooq.model.NestedSetNode;
+import de.wernz0r.nestedsets4jooq.exception.NodeNotFoundException;
+import de.wernz0r.nestedsets4jooq.model.NestedSetNode;
 import org.jooq.*;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
