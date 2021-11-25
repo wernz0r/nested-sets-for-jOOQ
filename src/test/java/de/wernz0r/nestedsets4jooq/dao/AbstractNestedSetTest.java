@@ -32,7 +32,7 @@ public class AbstractNestedSetTest {
     public final NestedSetDao<CategoryNode> dao;
 
     @Autowired
-    public AbstractNestedSetTest(NestedSetDao<CategoryNode> dao) {
+    AbstractNestedSetTest(NestedSetDao<CategoryNode> dao) {
         this.dao = dao;
     }
 

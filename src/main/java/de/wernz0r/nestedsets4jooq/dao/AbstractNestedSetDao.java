@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.wernz0r.nestedsets4jooq.dao;
 
 import de.wernz0r.nestedsets4jooq.exception.NodeNotFoundException;
