@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>Nested Sets for jOOQ</name>
-    <description>Java library to easily handle nested sets with jOOQ</description>
+    <description>Implementation of the nested set model for jOOQ</description>
     <url>https://github.com/wernz0r/nested-sets-for-jOOQ</url>
 
     <developers>
