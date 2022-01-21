@@ -1,5 +1,5 @@
 /*
- * Copyright 2021. Werner Elsler
+ * Copyright 2022. Werner Elsler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package de.wernz0r.nestedsets4jooq.dao;
+package io.github.wernz0r.nestedsets4jooq.dao;
 
-import de.wernz0r.nestedsets4jooq.model.CategoryNode;
-import de.wernz0r.nestedsets4jooq.test.tables.pojos.Category;
-import de.wernz0r.nestedsets4jooq.test.tables.records.CategoryRecord;
+import io.github.wernz0r.nestedsets4jooq.model.CategoryNode;
+import io.github.wernz0r.nestedsets4jooq.test.tables.pojos.Category;
+import io.github.wernz0r.nestedsets4jooq.test.tables.records.CategoryRecord;
 import org.jooq.Configuration;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import static de.wernz0r.nestedsets4jooq.test.tables.Category.CATEGORY;
+import static io.github.wernz0r.nestedsets4jooq.test.tables.Category.CATEGORY;
 
 @Repository
 public class CategoryNestedSetDao extends AbstractNestedSetDao<CategoryRecord, CategoryNode, Category, Long>

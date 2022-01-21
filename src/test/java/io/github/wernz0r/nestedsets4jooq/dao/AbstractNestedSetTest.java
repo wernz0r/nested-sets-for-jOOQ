@@ -1,5 +1,5 @@
 /*
- * Copyright 2021. Werner Elsler
+ * Copyright 2022. Werner Elsler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package de.wernz0r.nestedsets4jooq.dao;
+package io.github.wernz0r.nestedsets4jooq.dao;
 
-import de.wernz0r.nestedsets4jooq.helper.TestHelper;
-import de.wernz0r.nestedsets4jooq.model.CategoryNode;
+import io.github.wernz0r.nestedsets4jooq.helper.TestHelper;
+import io.github.wernz0r.nestedsets4jooq.model.CategoryNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

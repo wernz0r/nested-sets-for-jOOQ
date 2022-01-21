@@ -1,5 +1,5 @@
 /*
- * Copyright 2021. Werner Elsler
+ * Copyright 2022. Werner Elsler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package de.wernz0r.nestedsets4jooq.model;
+package io.github.wernz0r.nestedsets4jooq;
 
-public interface NestedSetNode<P, T> {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-    T getId();
+@SpringBootApplication
+public class TestApplication {
 
-    P setId(T id);
+    public static void main(String[] args) {
+        SpringApplication.run(TestApplication.class, args);
+    }
 
-    Long getLeft();
-
-    P setLeft(Long left);
-
-    Long getRight();
-
-    P setRight(Long right);
-
-    Long getLevel();
-
-    P setLevel(Long level);
 }

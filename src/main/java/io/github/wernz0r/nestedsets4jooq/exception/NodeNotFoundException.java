@@ -1,5 +1,5 @@
 /*
- * Copyright 2021. Werner Elsler
+ * Copyright 2022. Werner Elsler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package de.wernz0r.nestedsets4jooq.model;
+package io.github.wernz0r.nestedsets4jooq.exception;
 
-import de.wernz0r.nestedsets4jooq.test.tables.pojos.Category;
+public class NodeNotFoundException extends RuntimeException {
 
-public class CategoryNode extends Category implements NestedSetNode<Category, Long> {
-    @Override
-    public Long getLeft() {
-        return super.getLft();
+    public NodeNotFoundException() {
+        super();
     }
 
-    @Override
-    public Category setLeft(Long left) {
-        return super.setLft(left);
+    public NodeNotFoundException(String message) {
+        super(message);
     }
 
-    @Override
-    public Long getRight() {
-        return super.getRgt();
-    }
-
-    @Override
-    public Category setRight(Long right) {
-        return super.setRgt(right);
+    public NodeNotFoundException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.wernz0r</groupId>
+    <groupId>io.github.wernz0r</groupId>
     <artifactId>nested-sets-for-jooq</artifactId>
     <version>1.0.0</version>
 
@@ -134,7 +134,7 @@
                                 </generate>
                                 <target>
                                     <!-- this package will not be included in the final jar, see maven-jar-plugin -->
-                                    <packageName>de.wernz0r.nestedsets4jooq.test</packageName>
+                                    <packageName>io.github.wernz0r.nestedsets4jooq.test</packageName>
                                 </target>
                             </generator>
                         </configuration>
@@ -159,7 +159,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <excludes>
-                        <exclude>de/wernz0r/nestedsets4jooq/test/**</exclude>
+                        <exclude>io/github/wernz0r/nestedsets4jooq/test/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
