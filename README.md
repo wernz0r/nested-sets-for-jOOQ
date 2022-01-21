@@ -13,7 +13,7 @@ Simply add the following dependecy to your project:
 
     <groupId>io.github.wernz0r</groupId>
     <artifactId>nested-sets-for-jooq</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
 ## Usage
 
