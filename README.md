@@ -18,12 +18,14 @@ Simply add the following dependecy to your project:
 ## Usage
 
 Implement the `NestedSetNode<P, T>` interface, where `P` is a generated jOOQ POJO and `T` is the data type of the
-primary key. See [CategoryNode.java](src/test/java/de/wernz0r/nestedsets4jooq/model/CategoryNode.java) for an example.
+primary key. See [CategoryNode.java](src/test/java/io/github/wernz0r/nestedsets4jooq/model/CategoryNode.java) for an
+example.
 
 Now you can simply extend the `AbstractNestedSetDao<R, N, P, T>` class to create a DAO which provides essential nested
 set operations. `R` is a jOOQ record class, `N` your implementation of `NestedSetNode`, `P`
 is a jOOQ POJO and `T` is the data type of the primary key.
-See [CategoryNestedSetDao.java](src/test/java/de/wernz0r/nestedsets4jooq/dao/CategoryNestedSetDao.java) for an example.
+See [CategoryNestedSetDao.java](src/test/java/io/github/wernz0r/nestedsets4jooq/dao/CategoryNestedSetDao.java) for an
+example.
 
 ### Examples
 
@@ -43,4 +45,4 @@ Retrieve all children of a node: `dao.getChildren(node);`
 Retrieve all ancestors of a node: `dao.getAncestors(node);`
 
 More examples can be found in
-[AbstractNestedSetTest.java](src/test/java/de/wernz0r/nestedsets4jooq/dao/AbstractNestedSetTest.java)
+[AbstractNestedSetTest.java](src/test/java/io/github/wernz0r/nestedsets4jooq/dao/AbstractNestedSetTest.java)
