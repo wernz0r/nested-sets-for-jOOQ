@@ -11,7 +11,7 @@ With this library the nested set model can easily be applied to record classes g
 
 Simply add the following dependecy to your project:
 
-    <groupId>de.wernz0r</groupId>
+    <groupId>io.github.wernz0r</groupId>
     <artifactId>nested-sets-for-jooq</artifactId>
     <version>1.0-SNAPSHOT</version>
 
