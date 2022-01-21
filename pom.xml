@@ -6,7 +6,7 @@
 
     <groupId>io.github.wernz0r</groupId>
     <artifactId>nested-sets-for-jooq</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <name>Nested Sets for jOOQ</name>
     <description>Implementation of the nested set model for jOOQ</description>
