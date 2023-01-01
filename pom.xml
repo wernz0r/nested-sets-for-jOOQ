@@ -206,7 +206,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -217,7 +217,7 @@
                     <dependency>
                         <groupId>com.thoughtworks.xstream</groupId>
                         <artifactId>xstream</artifactId>
-                        <version>1.4.15</version> <!-- apparently this needs to be exactly this version -->
+                        <version>1.4.20</version>
                     </dependency>
                 </dependencies>
             </plugin>
